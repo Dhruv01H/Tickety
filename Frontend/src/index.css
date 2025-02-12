@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #D71A57;
+  --color-secondary: #AB2E58;
+  --color-tertiary: #F2F7F2;
+  --color-quaternary: #BE97C6;
+  --color-dark: #2E3640;
+
+  --font-quantico: 'Quantico', serif;
+  --font-space: 'Space Grotesk', serif;
+  --font-syne: 'Syne', serif;
+}
