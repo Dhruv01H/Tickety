@@ -6,8 +6,17 @@
   --color-tertiary: #F2F7F2;
   --color-quaternary: #BE97C6;
   --color-dark: #2E3640;
+  --color-frost: #F8F8FF;
 
   --font-quantico: 'Quantico', serif;
   --font-space: 'Space Grotesk', serif;
   --font-syne: 'Syne', serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-frost);
 }
