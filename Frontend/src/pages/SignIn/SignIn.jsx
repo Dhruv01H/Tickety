@@ -7,7 +7,7 @@ import axios from 'axios';
 
 function SignIn() {
 
-  
+
   const navigate = useNavigate();
   const [error, setError] = useState("");
 
@@ -25,9 +25,16 @@ function SignIn() {
         },
       });
       console.log(response.data);
+      if(response.data){
       alert("Successful Login");
       
       navigate("/");
+      }
+      else{
+        alert("Invalid Credentials");
+        navigate("/SignIn");
+        setError("Invalid Credentials");
+        }
       
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
