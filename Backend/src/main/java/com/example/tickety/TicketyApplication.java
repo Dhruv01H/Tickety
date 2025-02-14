@@ -9,5 +9,5 @@ public class TicketyApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TicketyApplication.class, args);
 	}
-
+	//sadad
 }
