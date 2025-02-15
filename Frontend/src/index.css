@@ -11,6 +11,7 @@
   --font-quantico: 'Quantico', serif;
   --font-space: 'Space Grotesk', serif;
   --font-syne: 'Syne', serif;
+  --font-courgette: 'Courgette', "cursive", sans-serif;
 }
 
 html {
@@ -19,4 +20,5 @@ html {
 
 body {
   background-color: var(--color-frost);
+  font-family: var(--font-space);
 }
