@@ -1,12 +1,48 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from 'axios';
 
 function SignUp() {
   const navigate = useNavigate();
-  const handleForm = (e) => {
+  const [error,setError] = useState("");
+
+  const handleForm = async(e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const obj = Object.fromEntries(formData.entries());
     console.log(obj);
+  
+    if(obj.password != obj.confirmpassword){
+      console.log(obj.password);
+      console.log(obj.confirmpassword);
+      alert("Password Does not match");
+      window.location.reload();
+      return;
+    }
+    else{
+    try {
+      
+      const response = await axios.put('http://localhost:8080/api/auth/signup', obj ,{
+        headers: {
+          'Content-Type': 'application/json',
+          },
+      });
+      if(response.data == "User Registration Successful"){
+        alert("Please signin");
+        navigate('/signin');
+      }
+      else{
+        if(response.data == "Email Already Exists"){
+          alert("Email Already Exists. Please SignIn");
+          navigate("/signin");
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      setError("");
+    }
+
+  }
   };
 
   return (
@@ -25,7 +61,7 @@ function SignUp() {
               </label>
               <input
                 type="text"
-                name="Username"
+                name="name"
                 required
                 placeholder="Username"
                 className="w-full px-3 py-1 text-xl rounded-lg text-frost outline-0 bg-slate-400"
@@ -38,7 +74,7 @@ function SignUp() {
               </label>
               <input
                 type="email"
-                name="Email"
+                name="email"
                 placeholder="E-mail"
                 required
                 className="w-full px-3 py-1 text-xl rounded-lg text-frost outline-0 bg-slate-400"
@@ -51,7 +87,7 @@ function SignUp() {
               </label>
               <input
                 type="tel"
-                name="Phone"
+                name="phone"
                 placeholder="Phone"
                 minLength={10}
                 maxLength={10}
@@ -66,7 +102,7 @@ function SignUp() {
               </label>
               <input
                 type="password"
-                name="Password"
+                name="password"
                 placeholder="Password"
                 minLength={8}
                 maxLength={14}
@@ -81,7 +117,7 @@ function SignUp() {
               </label>
               <input
                 type="password"
-                name="Confirm"
+                name="confirmpassword"
                 placeholder="Confirm Password"
                 minLength={8}
                 maxLength={14}
