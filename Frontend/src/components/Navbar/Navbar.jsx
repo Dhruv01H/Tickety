@@ -11,14 +11,14 @@ function Navbar() {
   return (
     <>
     {/* ========= Desktop Menu ============= */}
-      <nav className="flex items-center justify-between px-10 py-4 space-y-3 bg-dark">
+      <nav className="z-10 flex items-center justify-between px-10 py-4 space-y-3 bg-transparent">
         <Link to={"/"}>
-          <h1 className="text-5xl cursor-pointer font-courgette text-primary">
+          <h1 className="text-5xl cursor-pointer font-acme text-primary">
             Tickety
           </h1>
         </Link>
 
-        <menu className="hidden gap-10 text-xl font-medium lg:flex text-frost">
+        <menu className="hidden gap-10 text-xl font-medium lg:flex text-dark">
           <Link
             to={"/"}
             className="transition-all duration-500 hover:scale-105 hover:text-primary"
@@ -76,7 +76,7 @@ function Navbar() {
         <div className="lg:hidden">
           <i
             onClick={menuToggler}
-            className={`text-3xl text-frost transition-transform duration-300 ease-in-out ${
+            className={`text-3xl text-dark font-semibold transition-transform duration-300 ease-in-out ${
               isMenuOpen ? "rotate-180 text-primary" : "rotate-0"
             } ri-${isMenuOpen ? "close-line" : "menu-5-line"}`}
           ></i>
@@ -85,7 +85,7 @@ function Navbar() {
 
       {/* ========= Mobile Menu ============= */}
       <menu
-        className={`fixed top-22 left-0 z-10 flex flex-col px-10 py-4 text-2xl font-medium h-screen sm:w-[50%] md:w-[35%] gap-5 lg:hidden bg-dark text-frost transition-transform duration-500 ease-in-out ${
+        className={`fixed top-0 left-0 z-20 flex flex-col px-10 py-16 space-y-2 text-2xl h-screen max-sm:w-[75%] md:w-[40%] gap-5 lg:hidden bg-dark text-frost transition-transform duration-500 ease-in-out ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
