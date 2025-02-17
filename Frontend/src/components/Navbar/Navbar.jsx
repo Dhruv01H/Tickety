@@ -10,6 +10,9 @@ function Navbar() {
   }
   return (
     <>
+     {/* ========= Background Blur ============= */}
+     <div className={`fixed inset-0 bg-black/50 transition-opacity duration-500 ${isMenuOpen ? 'visible opacity-100 blur-sm' : 'invisible opacity-0'}`} onClick={menuToggler}></div>
+     
     {/* ========= Desktop Menu ============= */}
       <nav className="z-10 flex items-center justify-between px-10 py-4 space-y-3 bg-transparent">
         <Link to={"/"}>
@@ -66,7 +69,7 @@ function Navbar() {
               to={"/profile"}
               className="transition-all duration-500 hover:scale-110 hover:text-primary"
             >
-              <i className="text-xl ri-user-3-fill"></i>
+              <i className="text-xl rounded-[25%] border p-2.5 ri-user-3-fill"></i>
             </Link>
           )}
         </menu>
@@ -76,7 +79,7 @@ function Navbar() {
         <div className="lg:hidden">
           <i
             onClick={menuToggler}
-            className={`text-3xl text-dark font-semibold transition-transform duration-300 ease-in-out ${
+            className={`text-4xl text-dark font-medium transition-transform duration-300 ease-in-out ${
               isMenuOpen ? "rotate-180 text-primary" : "rotate-0"
             } ri-${isMenuOpen ? "close-line" : "menu-5-line"}`}
           ></i>
@@ -92,18 +95,33 @@ function Navbar() {
         <Link to={"/"} className="transition-all duration-500 hover:scale-110 hover:text-primary">
           <li>Home</li>
         </Link>
-        <Link to={"/about"} className="transition-all duration-500 hover:scale-110 hover:text-primary">
-          <li>About Us</li>
+        <Link to={"/movie"} className="transition-all duration-500 hover:scale-110 hover:text-primary">
+          <li>Movies</li>
+        </Link>
+        <Link to={"/event"} className="transition-all duration-500 hover:scale-110 hover:text-primary">
+          <li>Events</li>
         </Link>
         <Link to={"/contact"} className="transition-all duration-500 hover:scale-110 hover:text-primary">
           <li>Contact Us</li>
         </Link>
-        <Link to={"/news"} className="transition-all duration-500 hover:scale-110 hover:text-primary">
-          <li>News</li>
+        <Link to={"/about"} className="transition-all duration-500 hover:scale-110 hover:text-primary">
+          <li>About Us</li>
         </Link>
-        <Link to={"/faq"} className="transition-all duration-500 hover:scale-110 hover:text-primary">
-          <li>FAQ's</li>
-        </Link>
+        {!user ? (
+            <Link
+              to={"/signin"}
+              className="transition-all duration-500 hover:scale-105 hover:text-primary"
+            >
+              <li>Join Now</li>
+            </Link>
+          ) : (
+            <Link
+              to={"/profile"}
+              className="transition-all duration-500 hover:scale-110 hover:text-primary"
+            >
+              <li>Profile</li>
+            </Link>
+          )}
       </menu>
     </>
   );
