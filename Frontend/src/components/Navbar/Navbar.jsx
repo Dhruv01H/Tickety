@@ -8,6 +8,19 @@ function Navbar() {
   const menuToggler = () => {
     setIsMenuOpen(!isMenuOpen);
   }
+
+  // useEffect(() => {
+  //   axios
+  //     .get("http://localhost:8080/api/auth/session", { withCredentials: true })
+  //     .then((response) => {
+  //       if (response.data.startsWith("Logged in as: ")) {
+  //         const email = response.data.split(": ")[1]; // Extract email
+  //         setUser(email);
+  //       }
+  //     })
+  //     .catch(() => setUser(null)); // No session
+  // }, []);
+
   return (
     <>
      {/* ========= Background Blur ============= */}
@@ -65,13 +78,19 @@ function Navbar() {
               <li>Join Now</li>
             </Link>
           ) : (
+            
             <Link
               to={"/profile"}
               className="transition-all duration-500 hover:scale-110 hover:text-primary"
             >
+              <li>Profile</li>
               <i className="text-xl rounded-[25%] border p-2.5 ri-user-3-fill"></i>
             </Link>
+            
+  
+            
           )}
+          
         </menu>
 
         {/* ========= Menu Togglers ============= */}

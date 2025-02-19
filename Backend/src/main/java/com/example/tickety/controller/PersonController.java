@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.tickety.Repository.PersonRepository;
 import com.example.tickety.bean.Person;
 import com.example.tickety.service.EmailService;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -28,7 +29,7 @@ public class PersonController {
     private EmailService emailService;
 
     @PostMapping("/signin")
-    public boolean signin(@RequestBody Person person) {
+    public boolean signin(@RequestBody Person person , HttpSession session) {
         String password = person.getPassword();
         String email = person.getEmail();
 
@@ -43,6 +44,8 @@ public class PersonController {
             }
             
             if (p.getPassword().equals(password)) {
+
+                session.setAttribute("user", p);
                 return true;
             }
             return false;
@@ -81,4 +84,19 @@ public class PersonController {
 
         return "❌ Invalid verification link!";
     }
+
+    // ✅ Check if the user is logged in
+        @GetMapping("/session")
+        public String getSession(HttpSession session) {
+            String user = (String) session.getAttribute("user");
+            return (user != null) ? "Logged in as: " + user : "No active session";
+        }
+
+        // ✅ Logout (destroy session)
+        @GetMapping("/logout")
+        public String logout(HttpSession session) {
+            session.invalidate(); // ❌ Destroy session
+            return "Session ended. You have been logged out.";
+        }
+
 }
