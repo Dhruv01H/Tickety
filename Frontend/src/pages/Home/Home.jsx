@@ -4,7 +4,7 @@ import { Hero } from "../../components/component_index"
 function Home() {
   return (
     <>
-
+      <Hero />
     </>
   );
 }
