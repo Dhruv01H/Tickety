@@ -14,7 +14,7 @@ function Navbar() {
      <div className={`fixed inset-0 bg-black/50 transition-opacity duration-500 ${isMenuOpen ? 'visible opacity-100 blur-sm' : 'invisible opacity-0'}`} onClick={menuToggler}></div>
      
     {/* ========= Desktop Menu ============= */}
-      <nav className="fixed top-0 left-0 z-10 flex items-center justify-between w-full px-10 py-5 space-y-2 bg-transparent border-b-[1px] border-frost lg:px-40 backdrop-blur-xs">
+      <nav className=" top-0 left-0 z-10 flex items-center justify-between w-full px-10 py-5 space-y-2 bg-transparent border-b-[1px] border-frost lg:px-40 backdrop-blur-xs">
         <Link to={"/"}>
           <h1 className="text-5xl font-semibold cursor-pointer font-acme text-primary">
             Tickety
