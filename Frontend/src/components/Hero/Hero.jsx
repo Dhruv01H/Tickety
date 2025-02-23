@@ -38,12 +38,11 @@ function Hero() {
             Welcome to Tickety
           </h1>
           <h2 className="mt-4 text-2xl md:text-6xl">
-            Book tickets for <span className="text-primary">{text}</span>
+            Book tickets for <span className="font-bold text-primary">{text}</span>
           </h2>
         </div>
       </section>
       <div className="mb-20 border-t-[14px] border-black border-dashed" />
-
     </>
   );
 }
