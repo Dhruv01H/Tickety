@@ -41,7 +41,7 @@ function Navbar() {
 
       {/* ========= Desktop Menu ============= */}
       <nav
-        className={`fixed top-0 left-0 z-10 flex items-center justify-between w-full px-10 py-5 bg-transparent border-b-[1px] border-frost lg:px-40 backdrop-blur-xs transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 z-10 flex items-center justify-between w-full px-10 py-5 bg-black/60 border-b-[1px] border-frost lg:px-40 backdrop-blur-xs transition-transform duration-300 ease-in-out ${
           isScrollingUp ? "translate-y-0" : "-translate-y-full"
         }`}
       >
