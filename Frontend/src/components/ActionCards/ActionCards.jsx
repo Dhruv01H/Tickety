@@ -3,7 +3,7 @@ import React from "react";
 function ActionCards() {
   return (
     <>
-      <div className="flex flex-col items-center justify-around gap-5 mb-20 md:px-28 lg:flex-row">
+      <div className="flex flex-col items-center justify-around gap-5 mb-20 md:mb-40 md:px-28 lg:flex-row">
         {/** Card Container */}
         {[ 
           { text: "Get Tickets", heading: "Book movie tickets", icon: "ri-movie-2-line" },

@@ -22,3 +22,23 @@ body {
   background-color: var(--color-frost);
   font-family: var(--font-space);
 }
+
+.bg-gradient-1 {
+  background: linear-gradient(135deg, #D71A57, #AB2E58);
+}
+
+.bg-gradient-2 {
+  background: linear-gradient(135deg, #F2F7F2, #BE97C6);
+}
+
+.bg-gradient-3 {
+  background: linear-gradient(135deg, #2E3640, #D71A57);
+}
+
+.bg-gradient-4 {
+  background: linear-gradient(135deg, #AB2E58, #BE97C6, #F2F7F2);
+}
+
+.bg-gradient-5 {
+  background: linear-gradient(135deg, #2E3640, #F2F7F2, #D71A57);
+}
