@@ -1,5 +1,5 @@
 import React from "react";
-import { Hero, ActionCards, MovieCarousel } from "../../components/component_index"
+import { Hero, ActionCards, MovieCarousel, EventCarousel } from "../../components/component_index"
 
 function Home() {
   return (
@@ -7,6 +7,7 @@ function Home() {
       <Hero />
       <ActionCards />
       <MovieCarousel />
+      <EventCarousel />
     </>
   );
 }
