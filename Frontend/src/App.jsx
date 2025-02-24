@@ -4,12 +4,12 @@ import "react-toastify/dist/ReactToastify.css";
 import { Routes, Route } from "react-router-dom"
 import { Navbar } from "./components/component_index.js"
 import { Home, Profile, SignIn, SignUp, Contact } from "./pages/page_index.js"
-
+import AppContext from "./context/AppContext"; 
 function App() {
 
   return (
-    <>
-      <ToastContainer position='bottom-right'/>
+    <AppContext>
+           <ToastContainer position='bottom-right'/>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -18,8 +18,8 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/contact" element={<Contact />} />
       </Routes>
-    </>
+      </AppContext>
   )
 }
 
-export default App
+export default AppContext

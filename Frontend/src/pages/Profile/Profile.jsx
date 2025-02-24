@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { statesAndDistricts } from "./data";
 import { assets } from "../../assets/assets";
+import { AppContext } from "../../context/AppContext";
 
 function Profile() {
   /* State Management handlers for the dropdown list of states and districts */
   const [selectedState, setSelectedState] = useState("");
+  const { user ,setUser } = useContext(AppContext); 
   const [selectedDistrict, setSelectedDistrict] = useState("");
+  console.log(setUser.name);
 
   /* State Management handlers to handle dynamic values of input fields and store them */
   const [fullname, setFullname] = useState("Your Fullname");
@@ -30,7 +33,7 @@ function Profile() {
         <div className="flex flex-col justify-between gap-5 sm:items-center sm:flex-row">
           <h1 className="text-2xl md:text-4xl">
             Hey there!{" "}
-            <span className="text-3xl text-primary md:text-5xl">Username</span>
+            <span className="text-3xl text-primary md:text-5xl">{}</span>
           </h1>
 
           {!isEditing ? (

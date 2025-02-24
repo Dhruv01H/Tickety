@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext,useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 
@@ -9,17 +9,6 @@ function Navbar() {
     setIsMenuOpen(!isMenuOpen);
   }
 
-  // useEffect(() => {
-  //   axios
-  //     .get("http://localhost:8080/api/auth/session", { withCredentials: true })
-  //     .then((response) => {
-  //       if (response.data.startsWith("Logged in as: ")) {
-  //         const email = response.data.split(": ")[1]; // Extract email
-  //         setUser(email);
-  //       }
-  //     })
-  //     .catch(() => setUser(null)); // No session
-  // }, []);
 
   return (
     <>

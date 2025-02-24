@@ -1,49 +1,53 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from 'axios';
-//import cors
-
-
+import { useEffect, useState, useContext } from "react";
+import axios from "axios";
+import { AppContext } from "../../context/AppContext"; // Import AppContext
 
 function SignIn() {
-
-
   const navigate = useNavigate();
+  const { setUser } = useContext(AppContext); // ✅ Get setUser from context
   const [error, setError] = useState("");
-
 
   const handleForm = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const obj = Object.fromEntries(formData.entries());
-    console.log("Sending data to backend:", obj); 
 
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/signin',obj ,{
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await axios.post("http://localhost:8080/api/auth/signin", obj, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true, // ✅ Ensure session cookies are sent
       });
-      console.log(response.data);
-      if(response.data){
-      alert("Successful Login");
-      
-      navigate("/");
-      }
-      else{
-        alert("Invalid Credentials");
-        navigate("/SignIn");
-        setError("Invalid Credentials");
+
+      if (response.data) {
+        alert("Successful Login");
+
+        // ✅ Fetch session data after successful login
+        try {
+          const sessionResponse = await axios.get("http://localhost:8080/api/auth/session", {
+            withCredentials: true,
+          });
+
+          if (response.status === 200) {
+            setUser(sessionResponse.data)
+            // const email = sessionResponse.data.split(": ")[1]; // Extract email
+            // setUser(email); // ✅ Update user context
+            navigate("/"); // Redirect after setting user
+          } else {
+            alert("Session issue. Try logging in again.");
+          }
+        } catch (sessionError) {
+          console.error("Session Fetch Error:", sessionError);
+          setUser(null);
         }
-      
+      } else {
+        setError("Invalid Credentials");
+      }
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
-      setError("");
+      setError("Something went wrong.");
     }
-
-    console.log(obj);
   };
-
   return (
     <>
       <div className="flex items-center justify-center h-screen">
