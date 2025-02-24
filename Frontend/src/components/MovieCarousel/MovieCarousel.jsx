@@ -1,5 +1,5 @@
 import React from "react";
-import { assets } from "../../assets/assets";
+import movies from "./data";
 
 function MovieCarousel() {
   return (
@@ -19,65 +19,27 @@ function MovieCarousel() {
 
       {/* Static Carousel for movies available now */}
       <div className="flex flex-col items-center gap-5 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-        <div className="relative overflow-hidden">
-          <div className="overflow-hidden rounded-md w-72">
-            <img src={assets.poster1} alt="Poster1" className="object-cover w-full h-[28rem]"/>
-          </div>
+        {movies.map((movie) => (
+          <div key={movie.id} className="relative overflow-hidden transition-all duration-500 border-[5px] border-transparent rounded-md hover:border-primary">
+            <div className="overflow-hidden">
+              <img
+                src={movie.image}
+                alt={movie.title}
+                className="object-cover w-full h-[28rem] transition-transform duration-500 hover:scale-105"
+              />
+            </div>
 
-          <div className="absolute bottom-0 left-0 flex flex-col gap-1 p-5">
-            <p className="text-sm text-frost">Suspense / 180 Mins</p>
-            <h3 className="text-2xl mb-1.5 text-frost">Shutter Island</h3>
-            <button className="text-frost px-3 py-1.5 border border-frost rounded-md cursor-pointer">Get Ticket</button>
+            <div className="absolute bottom-0 left-0 flex flex-col w-full gap-1 p-5 ">
+              <h3 className="text-2xl font-semibold text-frost">{movie.title}</h3>
+              <p className="text-sm mb-1.5 text-frost">
+                {movie.movieType} / {movie.duration}
+              </p>
+              <button className="text-frost px-3 py-1.5 border border-frost rounded-md cursor-pointer transition-all duration-500 hover:bg-primary hover:text-white hover:border-primary">
+                Get Ticket
+              </button>
+            </div>
           </div>
-        </div>
-        
-        <div className="relative overflow-hidden">
-          <div className="overflow-hidden rounded-md w-72">
-            <img src={assets.poster2} alt="Poster2" className="object-cover w-full h-[28rem]"/>
-          </div>
-
-          <div className="absolute bottom-0 left-0 flex flex-col gap-1 p-5">
-            <p className="text-sm text-frost">Action / 190 Mins</p>
-            <h3 className="text-2xl mb-1.5 text-frost">Jhonny Cage</h3>
-            <button className="text-frost px-3 py-1.5 border border-frost rounded-md cursor-pointer">Get Ticket</button>
-          </div>
-        </div>
-        
-        <div className="relative overflow-hidden">
-          <div className="overflow-hidden rounded-md w-72">
-            <img src={assets.poster3} alt="Poster3" className="object-cover w-full h-[28rem]"/>
-          </div>
-
-          <div className="absolute bottom-0 left-0 flex flex-col gap-1 p-5">
-            <p className="text-sm text-frost">Drama / 150 Mins</p>
-            <h3 className="text-2xl mb-1.5 text-frost">Festival</h3>
-            <button className="text-frost px-3 py-1.5 border border-frost rounded-md cursor-pointer">Get Ticket</button>
-          </div>
-        </div>
-        
-        <div className="relative overflow-hidden">
-          <div className="overflow-hidden rounded-md w-72">
-            <img src={assets.poster4} alt="Poster4" className="object-cover w-full h-[28rem]"/>
-          </div>
-
-          <div className="absolute bottom-0 left-0 flex flex-col gap-1 p-5">
-            <p className="text-sm text-frost">Comedy / 180 Mins</p>
-            <h3 className="text-2xl mb-1.5 text-frost">Tureman Show</h3>
-            <button className="text-frost px-3 py-1.5 border border-frost rounded-md cursor-pointer">Get Ticket</button>
-          </div>
-        </div>
-        
-        <div className="relative overflow-hidden">
-          <div className="overflow-hidden rounded-md w-72">
-            <img src={assets.poster5} alt="Poster5" className="object-cover w-full h-[28rem]"/>
-          </div>
-
-          <div className="absolute bottom-0 left-0 flex flex-col gap-1 p-5">
-            <p className="text-sm text-frost">Sci-Fi / 200 Mins</p>
-            <h3 className="text-2xl mb-1.5 text-frost">The Matrix</h3>
-            <button className="text-frost px-3 py-1.5 border border-frost rounded-md cursor-pointer">Get Ticket</button>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
