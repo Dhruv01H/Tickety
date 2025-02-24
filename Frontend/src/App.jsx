@@ -4,11 +4,11 @@ import "react-toastify/dist/ReactToastify.css";
 import { Routes, Route } from "react-router-dom"
 import { Navbar, Footer } from "./components/component_index.js"
 import { Home, Profile, SignIn, SignUp, Contact } from "./pages/page_index.js"
-import AppContext from "./context/AppContext"; 
+import AppContextProvider  from "./context/AppContext"; 
 function App() {
 
   return (
-    <AppContext>
+    <AppContextProvider>
            <ToastContainer position='bottom-right'/>
       <Navbar />
       <Routes>
@@ -19,8 +19,8 @@ function App() {
         <Route path="/contact" element={<Contact />} />
       </Routes>
       <Footer />
-      </AppContext>
+      </AppContextProvider>
   )
 }
 
-export default AppContext
+export default App

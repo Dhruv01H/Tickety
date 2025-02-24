@@ -2,57 +2,87 @@ import React, { useContext, useState } from "react";
 import { statesAndDistricts } from "./data";
 import { assets } from "../../assets/assets";
 import { AppContext } from "../../context/AppContext";
+import axios from "axios";
 
 function Profile() {
   /* State Management handlers for the dropdown list of states and districts */
-  const [selectedState, setSelectedState] = useState("");
-  const { user ,setUser } = useContext(AppContext); 
-  const [selectedDistrict, setSelectedDistrict] = useState("");
-  console.log(setUser.name);
+  const { user, setUser } = useContext(AppContext);
+  console.log(user.name);
 
   /* State Management handlers to handle dynamic values of input fields and store them */
-  const [fullname, setFullname] = useState("Your Fullname");
-  const [username, setUsername] = useState("Your Username");
-  const [email, setEmail] = useState("yourmail@example.com");
-  const [phone, setPhone] = useState("+91-1234567890");
-  const [dob, setDOB] = useState("2000-01-01");
-  const [address, setAddress] = useState("The complete or short and crisp address of the user");
+  const [fullname, setFullname] = useState(user?.name || "");
+  const [username, setUsername] = useState(user?.name || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [phone, setPhone] = useState(user?.phone || "Enter Your Phone Number.");
+  const [dob, setDOB] = useState(user?.dob || "2001-01-01");  // Use valid date format YYYY-MM-DD
+  const [address, setAddress] = useState(user?.address || "Enter Your Address.");
+  const [selectedDistrict, setSelectedDistrict] = useState(user?.district || "");
+  const [selectedState, setSelectedState] = useState(user?.state || "");
+  const [gender, setGender] = useState(user?.gender || "Male");
+
 
   /* State Management handlers to handle the edit mode of the profile */
   const [isEditing, setIsEditing] = useState(false);
   const handleEdit = () => {
     setIsEditing(true);
   }
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsEditing(false);
-    // Saving logic can be applied here like call for an api to save the data
-  }
+    try {
+      const updatedUser = {
+        name: fullname,
+        username: username,
+        email: email,
+        phone: phone,
+        dob: dob,
+        address: address,
+        state: selectedState,
+        district: selectedDistrict,
+        gender: gender,
+      };
+
+      const response = await axios.put("http://localhost:8080/api/auth/updatedata", updatedUser, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.data === "Update Successful") {
+        alert("Profile updated successfully!");
+        setUser(updatedUser); // ✅ Update UI with new data
+      } else {
+        alert("Failed to update profile.");
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Something went wrong.");
+    }
+  };
+
   return (
     <>
       <div className="px-10 py-6 mt-48 mb-32 sm:px-14 md:px-20 lg:px-28 xl:px-32 2xl:px-40">
         <div className="flex flex-col justify-between gap-5 sm:items-center sm:flex-row">
           <h1 className="text-2xl md:text-4xl">
-            Hey there!{" "}
-            <span className="text-3xl text-primary md:text-5xl">{}</span>
+            Hey there! {user.name}
+            <span className="text-3xl text-primary md:text-5xl">{ }</span>
           </h1>
 
           {!isEditing ? (
-          <button
-            type="button"
-            onClick={handleEdit}
-            className="px-3 text-frost font-medium bg-primary py-1.5 text-lg rounded-lg hover:scale-105 transition-all duration-500"
-          >
-            Edit Profile
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={handleSave}
-            className="px-3 text-frost font-medium bg-quaternary py-1.5 text-lg rounded-lg hover:scale-105 transition-all duration-500"
-          >
-            Save Changes
-          </button>
-        )}
+            <button
+              type="button"
+              onClick={handleEdit}
+              className="px-3 text-frost font-medium bg-primary py-1.5 text-lg rounded-lg hover:scale-105 transition-all duration-500"
+            >
+              Edit Profile
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleSave}
+              className="px-3 text-frost font-medium bg-quaternary py-1.5 text-lg rounded-lg hover:scale-105 transition-all duration-500"
+            >
+              Save Changes
+            </button>
+          )}
         </div>
 
         <div className="flex flex-col grid-cols-6 gap-10 mt-10 md:grid">
@@ -164,13 +194,16 @@ function Profile() {
                 <select
                   name="Gender"
                   id="Gender"
-                  defaultValue={"Female"}
+                  value={gender} // ✅ Bind the state to the select value
+                  onChange={(e) => setGender(e.target.value)} // ✅ Update state on change
+                  disabled={!isEditing} // ✅ Only allow editing when in edit mode
                   className="w-full px-3 py-1.5 border border-gray-400 rounded-md"
                 >
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                   <option value="Other">Other</option>
                 </select>
+
               </div>
             </div>
 

@@ -3,9 +3,9 @@
     import java.util.Optional;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+    import org.springframework.http.HttpStatus;
+    import org.springframework.http.ResponseEntity;
+    import org.springframework.web.bind.annotation.CrossOrigin;
     import org.springframework.web.bind.annotation.GetMapping;
     import org.springframework.web.bind.annotation.PostMapping;
     import org.springframework.web.bind.annotation.PutMapping;
@@ -107,4 +107,23 @@ import org.springframework.web.bind.annotation.CrossOrigin;
                 return "Session ended. You have been logged out.";
             }
 
+            @PutMapping("/updatedata")
+            public String updateData(@RequestBody Person person) {
+                Optional<Person> existing = personRepository.findByEmail(person.getEmail());
+                if (existing.isPresent()) {
+                    Person p = existing.get();
+                    p.setName(person.getName());
+                    p.setGender(person.getGender());
+                    p.setEmail(person.getEmail());
+                    p.setPhone(person.getPhone());
+                    p.setDob(person.getDob());
+                    p.setAddress(person.getAddress());
+                    p.setState(person.getState());
+                    p.setDistrict(person.getDistrict());
+                    personRepository.save(p);
+                    return "Update Successful";
+                }
+                return "User Not Found";
+
     }
+}

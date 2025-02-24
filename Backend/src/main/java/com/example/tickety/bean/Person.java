@@ -1,32 +1,54 @@
 package com.example.tickety.bean;
 
 import java.io.Serializable;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table
+@Table(name = "person") // Explicitly naming the table
 public class Person implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column
+
+    @Column(nullable = false)
     private String name;
-    @Column
+
+    @Column(unique = true, nullable = false)
     private String email;
-    @Column
+
+    @Column(nullable = false, length = 10)
     private String phone;
-    @Column
+
+    @Column(nullable = false)
     private String password;
+
     @Column
     private boolean is_verified = false;
+
+    @Column
     private String verificationToken;
-    // getter setter
+
+    @Column
+    private String gender;
+
+    @Column
+    private String dob;
+
+    @Column(nullable = false)
+    private String phoneNumber;
+
+    @Column
+    private String address;
+
+    @Column
+    private String state;
+
+    @Column
+    private String district;
+
+    // ================= GETTERS AND SETTERS ================= //
+
     public int getId() {
         return id;
     }
@@ -66,20 +88,68 @@ public class Person implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
-    //getter and setter
+
     public boolean getIs_verified() {
         return is_verified;
     }
-    
-    //getter seter verificationtoken
+
     public void setIs_verified(boolean is_verified) {
         this.is_verified = is_verified;
-        }
-        public String getVerificationtoken() {
-            return verificationToken;
-            }
-            public void setVerificationtoken(String verificationtoken) {
-                this.verificationToken = verificationtoken;
-            }
+    }
 
+    public String getVerificationtoken() {
+        return verificationToken;
+    }
+
+    public void setVerificationtoken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getDob() {
+        return dob;
+    }
+
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
 }
