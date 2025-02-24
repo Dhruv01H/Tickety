@@ -3,7 +3,12 @@ import header2 from "./header2.jpg";
 import header3 from "./header3.jpg";
 import header4 from "./header4.jpg";
 import header5 from "./header5.jpg";
-import person1 from "./person1.jpg";
+import img1 from "./img-1.jpg";
+import img2 from "./img-2.jpg";
+import img3 from "./img-3.jpg";
+import img4 from "./img-4.jpg";
+import img5 from "./img-5.jpg";
+import img6 from "./img-6.jpg";
 import filmStrip from "./filmstrip.jpg";
 import stripes from "./strips.jpg";
 import poster1 from "./poster1.jpg";
@@ -23,7 +28,12 @@ export const assets = {
     header3,
     header4,
     header5,
-    person1,
+    img1,
+    img2,
+    img3,
+    img4,
+    img5,
+    img6,
     filmStrip,
     stripes,
     poster1,
