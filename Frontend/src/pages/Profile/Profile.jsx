@@ -58,7 +58,7 @@ function Profile() {
             <h3 className="mb-3 text-lg font-medium">Account Management</h3>
 
             <img
-              src={assets.person1}
+              src={assets.img1}
               alt="Profile Picture"
               className="mb-6 rounded-lg w-72 h-72 lg:w-80 lg:h-80"
             />
