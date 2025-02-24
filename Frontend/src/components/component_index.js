@@ -5,6 +5,7 @@ import ActionCards from "./ActionCards/ActionCards";
 import MovieCarousel from "./MovieCarousel/MovieCarousel";
 import EventCarousel from "./EventCarousel/EventCarousel";
 import Testimonial from "./Testimonial/Testimonial";
+import MovieStats from "./MovieStats/MovieStats";
 
 export { 
     Navbar,
@@ -14,4 +15,5 @@ export {
     MovieCarousel,
     EventCarousel,
     Testimonial,
+    MovieStats,
 }
