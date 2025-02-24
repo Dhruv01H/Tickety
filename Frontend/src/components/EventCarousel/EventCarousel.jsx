@@ -22,16 +22,24 @@ function EventCarousel() {
       {/* Dynamic Carousel for events available now */}
       <div className="flex flex-col items-center gap-5 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {data.map((event) => (
-          <div className="relative overflow-hidden">
-          <div className="overflow-hidden rounded-md w-72">
-            <img src={event.image} alt={event.name} className="object-cover w-full h-[28rem]"/>
+          <div key={event.id} className="relative overflow-hidden transition-all duration-500 border-[5px] border-transparent rounded-md hover:border-primary">
+            <div className="overflow-hidden">
+              <img
+                src={event.image}
+                alt={event.name}
+                className="object-cover w-full h-[28rem] transition-transform duration-500 hover:scale-105"
+              />
+            </div>
+            <div className="absolute bottom-0 left-0 flex flex-col w-full gap-1 p-5 ">
+              <h3 className="text-2xl font-semibold text-frost">{event.name}</h3>
+              <p className="text-sm mb-1.5 text-frost">
+                {event.eventType} / {event.eventDate}
+              </p>
+              <button className="text-frost px-3 py-1.5 border border-frost rounded-md cursor-pointer transition-all duration-500 hover:bg-primary hover:text-white hover:border-primary">
+                Get Ticket
+              </button>
+            </div>
           </div>
-          <div className="absolute bottom-0 left-0 flex flex-col gap-1 p-5">
-            <h3 className="text-2xl font-semibold text-frost">{event.name}</h3>
-            <p className="text-sm mb-1.5 text-frost">{event.eventType} / {event.eventDate}</p>
-            <button className="text-frost px-3 py-1.5 border border-frost rounded-md cursor-pointer">Get Ticket</button>
-          </div>
-        </div>
         ))}
       </div>
     </div>
