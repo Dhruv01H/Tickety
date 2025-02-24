@@ -11,6 +11,11 @@ import poster2 from "./poster2.jpg";
 import poster3 from "./poster3.jpg";
 import poster4 from "./poster4.jpg";
 import poster5 from "./poster5.jpg";
+import event1 from "./event1.jpg";
+import event2 from "./event2.jpg";
+import event3 from "./event3.jpg";
+import event4 from "./event4.jpg";
+import event5 from "./event5.jpg";
 
 export const assets = {
     header1,
@@ -26,4 +31,9 @@ export const assets = {
     poster3,
     poster4,
     poster5,
+    event1,
+    event2,
+    event3,
+    event4,
+    event5,
 }
