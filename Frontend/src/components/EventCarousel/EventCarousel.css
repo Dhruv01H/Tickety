@@ -1,0 +1,17 @@
+/* Swiper element styling */
+.swiper-pagination {
+    bottom: 20px; /* Adjust position */
+  }
+  
+  .swiper-pagination-bullet {
+    background-color: #3f3e3e; /* Light grey for inactive bullets */
+    width: 7px;
+    height: 7px;
+    opacity: 1;
+  }
+  
+  .swiper-pagination-bullet-active {
+    background-color: #d71a57;
+    width: 7px;
+    height: 7px;
+  }

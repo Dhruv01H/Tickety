@@ -29,7 +29,7 @@ function Profile() {
   }
   return (
     <>
-      <div className="px-10 py-6 sm:px-14 md:px-20 lg:px-28 xl:px-32 2xl:px-40">
+      <div className="px-10 py-6 mt-48 mb-32 sm:px-14 md:px-20 lg:px-28 xl:px-32 2xl:px-40">
         <div className="flex flex-col justify-between gap-5 sm:items-center sm:flex-row">
           <h1 className="text-2xl md:text-4xl">
             Hey there!{" "}
@@ -61,7 +61,7 @@ function Profile() {
             <h3 className="mb-3 text-lg font-medium">Account Management</h3>
 
             <img
-              src={assets.person1}
+              src={assets.img1}
               alt="Profile Picture"
               className="mb-6 rounded-lg w-72 h-72 lg:w-80 lg:h-80"
             />
