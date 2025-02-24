@@ -7,7 +7,7 @@ function MovieCarousel() {
       {/* Heading text for the setion */}
       <div className="flex items-center justify-between mb-10 max-md:text-center max-md:justify-center">
         <div className="flex flex-col gap-1">
-          <h3 className="text-5xl font-medium md:text-6xl font-quantico">MOVIES</h3>
+          <h3 className="text-5xl font-medium md:text-6xl font-quantico text-primary">MOVIES</h3>
           <p className="text-xl font-medium md:text-2xl">
             Be sure not to miss these Movies today.
           </p>

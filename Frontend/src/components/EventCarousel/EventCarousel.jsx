@@ -1,6 +1,5 @@
 import React from "react";
 import data from "./data";
-import { assets } from "../../assets/assets";
 
 function EventCarousel() {
   return (
@@ -9,7 +8,7 @@ function EventCarousel() {
       <div className="flex flex-col items-center justify-between mb-10 lg:flex-row max-lg:text-center max-lg:justify-center">
         <div className="flex flex-col gap-1">
           <p className="text-xl font-medium md:text-2xl">Checkout Events</p>
-          <h3 className="text-5xl font-medium max-lg:mb-3 md:text-6xl font-quantico">
+          <h3 className="text-5xl font-medium max-lg:mb-3 md:text-6xl font-quantico text-primary">
             Top Upcoming Events
           </h3>
         </div>
