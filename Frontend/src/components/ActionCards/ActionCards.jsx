@@ -12,7 +12,7 @@ function ActionCards() {
         ].map((card, index) => (
           <div 
             key={index} 
-            className="flex items-center justify-between w-[90%] xl:w-1/3 h-auto xl:h-52 p-6 md:p-8 bg-[url('./filmstrip.jpg')] bg-cover bg-no-repeat bg-center rounded-lg shadow-lg"
+            className="flex items-center justify-between w-[90%] xl:w-1/3 h-auto xl:h-44 p-6 md:p-8 bg-[url('./filmstrip.jpg')] bg-cover bg-no-repeat bg-center rounded-lg shadow-lg"
           >
             <div className="text-left text-frost">
               <p className="font-semibold text-md">{card.text}</p>
