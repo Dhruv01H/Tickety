@@ -1,12 +1,35 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
+import axios from "axios";
 
 function Navbar() {
   const { user, setUser } = useContext(AppContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrollingUp, setIsScrollingUp] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+
+
+  const logout = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const response = await axios.get("http://localhost:8080/api/auth/logout", {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
+  
+      if (response.status === 200) {
+        alert("Successful Logout");
+        setUser(null);  // ✅ Clear the user state
+        window.location.href = "/signin"; // ✅ Redirect to Sign-in Page
+      }
+    } catch (error) {
+      alert("Logout Failed!!!");
+      console.error("Logout Error:", error);
+    }
+  };
+  
 
   const menuToggler = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -95,13 +118,24 @@ function Navbar() {
               <li>Join Now</li>
             </Link>
           ) : (
-            <Link
-              to={"/profile"}
-              className="font-semibold transition-all duration-700 decoration-primary hover:text-primary hover:underline underline-offset-4"
-            >
-              <i className="text-xl rounded-[25%] border p-2.5 ri-user-3-fill"></i>
-            </Link>
+            
+            <><Link
+                to={"/profile"}
+                className="font-semibold transition-all duration-700 decoration-primary hover:text-primary hover:underline underline-offset-4"
+              >
+                <li>Profile</li>
+                {/* <i className="text-xl rounded-[25%] border p-2.5 ri-user-3-fill"></i> */}
+              </Link><Link
+              onClick={logout}
+                className="font-semibold transition-all duration-700 decoration-primary hover:text-primary hover:underline underline-offset-4"
+              >
+                <li>Logout</li>
+                </Link></>
+            
+  
+            
           )}
+          
         </menu>
 
         {/* ========= Menu Togglers ============= */}
