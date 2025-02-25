@@ -26,7 +26,7 @@ function Profile() {
   }
   return (
     <>
-      <div className="px-10 py-6 mt-48 mb-32 sm:px-14 md:px-20 lg:px-28 xl:px-32 2xl:px-40">
+      <div className="px-10 py-6 mb-32 mt-33 md:mt-48 sm:px-14 md:px-20 lg:px-28 xl:px-32 2xl:px-40">
         <div className="flex flex-col justify-between gap-5 sm:items-center sm:flex-row">
           <h1 className="text-2xl md:text-4xl">
             Hey there!{" "}

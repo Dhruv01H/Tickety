@@ -6,6 +6,7 @@ import MovieCarousel from "./MovieCarousel/MovieCarousel";
 import EventCarousel from "./EventCarousel/EventCarousel";
 import Testimonial from "./Testimonial/Testimonial";
 import MovieStats from "./MovieStats/MovieStats";
+import AboutStat from "./AboutStat/AboutStat";
 
 export { 
     Navbar,
@@ -16,4 +17,5 @@ export {
     EventCarousel,
     Testimonial,
     MovieStats,
+    AboutStat,
 }

@@ -3,6 +3,7 @@ import SignIn from "./SignIn/SignIn";
 import SignUp from "./SignUp/SignUp";
 import Profile from "./Profile/Profile";
 import Contact from "./Contact/Contact";
+import About from "./About/About";
 
 export { 
     Home,
@@ -10,4 +11,5 @@ export {
     SignUp,
     Profile,
     Contact,
+    About,
 }
