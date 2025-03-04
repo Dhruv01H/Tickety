@@ -22,6 +22,9 @@ import event3 from "./event3.jpg";
 import event4 from "./event4.jpg";
 import event5 from "./event5.jpg";
 import about from "./about.jpg";
+import posterBanner from "./poster_banner.jpg"
+import award1 from "./awards1.png"
+import award2 from "./awards2.png"
 
 export const assets = {
     header1,
@@ -48,4 +51,7 @@ export const assets = {
     event4,
     event5,
     about,
+    posterBanner,
+    award1,
+    award2,
 }
