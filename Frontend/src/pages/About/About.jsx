@@ -1,5 +1,5 @@
 import React from "react";
-import { AboutStat } from "../../components/component_index"
+import { AboutStat, Testimonial } from "../../components/component_index"
 
 function About() {
   return (
@@ -14,6 +14,7 @@ function About() {
       <div className="md:mb-40 mb-28 border-t-[14px] border-black border-dashed" />
 
       <AboutStat />
+      <Testimonial />
     </>
   );
 }
