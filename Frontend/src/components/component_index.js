@@ -8,6 +8,7 @@ import Testimonial from "./Testimonial/Testimonial";
 import MovieStats from "./MovieStats/MovieStats";
 import AboutStat from "./AboutStat/AboutStat";
 import PosterSection from "./PosterSection/PosterSection";
+import FaqAccordian from "./FaqAccordian/FaqAccordian";
 
 export { 
     Navbar,
@@ -20,4 +21,5 @@ export {
     MovieStats,
     AboutStat,
     PosterSection,
+    FaqAccordian,
 }
