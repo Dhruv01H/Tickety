@@ -21,49 +21,51 @@ import event2 from "./event2.jpg";
 import event3 from "./event3.jpg";
 import event4 from "./event4.jpg";
 import event5 from "./event5.jpg";
-import posterBanner from "./poster_banner.jpg"
-import award1 from "./awards1.png"
-import award2 from "./awards2.png"
+import posterBanner from "./poster_banner.jpg";
+import award1 from "./awards1.png";
+import award2 from "./awards2.png";
+import aboutinfo from "./about.jpg"
 
-import bycicle from "./bycicle.png"
-import car from "./car.png"
-import carbig from "./carbig.png"
-import minibus from "./minibus.png"
-import motorbike from "./motorbike.png"
-import rikshaw from "./rikshaw.png"
+import bycicle from "./bycicle.png";
+import car from "./car.png";
+import carbig from "./carbig.png";
+import minibus from "./minibus.png";
+import motorbike from "./motorbike.png";
+import rikshaw from "./rikshaw.png";
 
 export const assets = {
-    header1,
-    header2,
-    header3,
-    header4,
-    header5,
-    img1,
-    img2,
-    img3,
-    img4,
-    img5,
-    img6,
-    filmStrip,
-    stripes,
-    poster1,
-    poster2,
-    poster3,
-    poster4,
-    poster5,
-    event1,
-    event2,
-    event3,
-    event4,
-    event5,
-    posterBanner,
-    award1,
-    award2,
-    
-    bycicle,
-    car,
-    carbig,
-    minibus,
-    motorbike,
-    rikshaw,
-}
+  header1,
+  header2,
+  header3,
+  header4,
+  header5,
+  img1,
+  img2,
+  img3,
+  img4,
+  img5,
+  img6,
+  filmStrip,
+  stripes,
+  poster1,
+  poster2,
+  poster3,
+  poster4,
+  poster5,
+  event1,
+  event2,
+  event3,
+  event4,
+  event5,
+  posterBanner,
+  award1,
+  award2,
+  aboutinfo,
+
+  bycicle,
+  car,
+  carbig,
+  minibus,
+  motorbike,
+  rikshaw,
+};
