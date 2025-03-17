@@ -11,7 +11,6 @@ function App() {
   const location = useLocation()
 
   return (
-    <>
     <AppContextProvider>
       <ToastContainer position='bottom-right'/>
       {location.pathname !== '/ticket' && <Navbar />}
@@ -27,7 +26,6 @@ function App() {
       </Routes>
       {location.pathname !== '/ticket' && <Footer />}
       </AppContextProvider>
-    </>
   )
 }
 
