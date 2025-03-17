@@ -26,6 +26,13 @@ import posterBanner from "./poster_banner.jpg"
 import award1 from "./awards1.png"
 import award2 from "./awards2.png"
 
+import bycicle from "./bycicle.png"
+import car from "./car.png"
+import carbig from "./carbig.png"
+import minibus from "./minibus.png"
+import motorbike from "./motorbike.png"
+import rikshaw from "./rikshaw.png"
+
 export const assets = {
     header1,
     header2,
@@ -54,4 +61,11 @@ export const assets = {
     posterBanner,
     award1,
     award2,
+    
+    bycicle,
+    car,
+    carbig,
+    minibus,
+    motorbike,
+    rikshaw,
 }
