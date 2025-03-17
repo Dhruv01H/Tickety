@@ -6,6 +6,10 @@ import MovieCarousel from "./MovieCarousel/MovieCarousel";
 import EventCarousel from "./EventCarousel/EventCarousel";
 import Testimonial from "./Testimonial/Testimonial";
 import MovieStats from "./MovieStats/MovieStats";
+import PosterSection from "./PosterSection/PosterSection";
+import FaqAccordian from "./FaqAccordian/FaqAccordian";
+import SeatPopup from "./SeatPopup/SeatPopup";
+import SeatSelection from "./SeatSelection/SeatSelection";
 
 export { 
     Navbar,
@@ -16,4 +20,8 @@ export {
     EventCarousel,
     Testimonial,
     MovieStats,
+    PosterSection,
+    FaqAccordian,
+    SeatPopup,
+    SeatSelection,
 }

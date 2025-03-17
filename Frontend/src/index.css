@@ -42,3 +42,7 @@ body {
 .bg-gradient-5 {
   background: linear-gradient(135deg, #2E3640, #F2F7F2, #D71A57);
 }
+
+.bg-gradient-6 {
+  background: linear-gradient(180deg, rgba(248,248,255,1) 0%, rgba(181,181,214,0) 50%, rgba(248,248,255,1) 100%);
+}
