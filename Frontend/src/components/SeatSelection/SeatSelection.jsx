@@ -39,17 +39,19 @@ const SeatSelection = () => {
       if (nextSeat <= seatLayout.find((section) => section.rows.includes(row)).seats && !isBooked(row, nextSeat)) {
         selected.add(`${row}${nextSeat}`);
         rightSelected++;
+        if (rightSelected + leftSelected + 1 === selectedSeats) break; // Ensure exactly selectedSeats count
       } else {
         break;
       }
     }
 
     // If right selection is incomplete, try selecting to the left
-    for (let i = 1; rightSelected + leftSelected < selectedSeats; i++) {
+    for (let i = 1; rightSelected + leftSelected + 1 < selectedSeats; i++) {
       let prevSeat = seat - i;
       if (prevSeat > 0 && !isBooked(row, prevSeat)) {
         selected.add(`${row}${prevSeat}`);
         leftSelected++;
+        if (rightSelected + leftSelected + 1 === selectedSeats) break; // Ensure exactly selectedSeats count
       } else {
         break;
       }
