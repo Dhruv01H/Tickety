@@ -1,7 +1,11 @@
 import React from "react";
 import movies from "./data";
+import { useNavigate } from "react-router-dom";
 
 function MovieCarousel() {
+
+  const navigate = useNavigate()
+
   return (
     <div className="px-10 mb-20 md:px-28">
       {/* Heading text for the setion */}
@@ -20,12 +24,12 @@ function MovieCarousel() {
       {/* Static Carousel for movies available now */}
       <div className="flex flex-col items-center gap-5 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {movies.map((movie) => (
-          <div key={movie.id} className="relative overflow-hidden transition-all duration-500 border-[5px] border-transparent rounded-md hover:border-primary">
+          <div key={movie.id} className="relative overflow-hidden group transition-all duration-700 border-[5px] border-transparent rounded-md hover:border-primary">
             <div className="overflow-hidden">
               <img
                 src={movie.image}
                 alt={movie.title}
-                className="object-cover w-full h-[28rem] transition-transform duration-500 hover:scale-105"
+                className="object-cover w-full h-[28rem] transition-transform duration-700 group-hover:scale-105"
               />
             </div>
 
@@ -34,7 +38,7 @@ function MovieCarousel() {
               <p className="text-sm mb-1.5 text-frost">
                 {movie.movieType} / {movie.duration}
               </p>
-              <button className="text-frost px-3 py-1.5 border border-frost rounded-md cursor-pointer transition-all duration-500 hover:bg-primary hover:text-white hover:border-primary">
+              <button onClick={() => navigate("/ticket")} className="text-frost px-3 py-1.5 border border-frost rounded-md cursor-pointer transition-all duration-700 group-hover:bg-primary group-hover:text-white group-hover:border-primary">
                 Get Ticket
               </button>
             </div>
