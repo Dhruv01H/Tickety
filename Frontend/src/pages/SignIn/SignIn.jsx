@@ -15,6 +15,7 @@ function SignIn() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state
 
   // Handle Sign In
   const handleForm = async (e) => {
@@ -61,6 +62,8 @@ function SignIn() {
       return;
     }
 
+    setLoading(true); // Start loading
+
     try {
       const response = await axios.post("http://localhost:8080/api/auth/sendOtp", { email });
       if (response.status === 200) {
@@ -71,6 +74,8 @@ function SignIn() {
       console.error("Error sending OTP:", error.response?.data || error.message);
       setMessage("Failed to send OTP. Try again.");
     }
+
+    setLoading(false); // Stop loading
   };
 
   // Verify OTP
@@ -111,7 +116,7 @@ function SignIn() {
 
       if (response.status === 200) {
         setMessage("Password Reset Successful! Please login.");
-        
+
         // Reset State
         setForgotPassword(false);
         setOtpSent(false);
@@ -131,23 +136,23 @@ function SignIn() {
       <div className="flex flex-col items-center px-6 py-6 rounded-2xl bg-slate-300 min-w-[350px]">
         {!forgotPassword ? (
           // **Sign In Form**
-          <form action="" onSubmit={handleForm} className="flex flex-col gap-4 mb-8">
+          <form onSubmit={handleForm} className="flex flex-col gap-4 mb-8">
             <h1 className="mb-4 text-3xl font-bold">Sign In</h1>
 
             <div className="flex flex-col items-start gap-2 mb-1">
-              <label htmlFor="Email" className="text-lg">E-mail</label>
+              <label className="text-lg">E-mail</label>
               <input
                 type="email"
                 name="email"
                 placeholder="Email"
-                className="w-full px-3 py-1 text-xl rounded-lg text-frost outline-0 bg-slate-400"
+                className="w-full px-3 py-1 text-xl rounded-lg bg-slate-400 outline-none"
                 required
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
             <div className="flex flex-col items-start gap-2 mb-4">
-              <label htmlFor="Password" className="text-lg">Password</label>
+              <label className="text-lg">Password</label>
               <input
                 type="password"
                 name="password"
@@ -155,11 +160,11 @@ function SignIn() {
                 required
                 minLength={8}
                 maxLength={14}
-                className="w-full px-3 py-1 text-xl rounded-lg text-frost outline-0 bg-slate-400"
+                className="w-full px-3 py-1 text-xl rounded-lg bg-slate-400 outline-none"
               />
             </div>
 
-            <button type="submit" className="py-1.5 text-xl rounded-xl font-medium bg-slate-700 text-frost">
+            <button type="submit" className="py-1.5 text-xl rounded-xl font-medium bg-slate-700 text-white">
               Sign In
             </button>
           </form>
@@ -177,8 +182,16 @@ function SignIn() {
                   onChange={(e) => setEmail(e.target.value)}
                   className="px-3 py-2 rounded-lg bg-slate-400"
                 />
-                <button onClick={handleSendOtp} className="py-2 text-xl bg-slate-700 rounded-lg text-frost">
-                  Send OTP
+                <button
+                  onClick={handleSendOtp}
+                  className="py-2 text-xl bg-slate-700 rounded-lg text-white flex items-center justify-center"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <div className="animate-spin h-5 w-5 border-t-2 border-white border-solid rounded-full"></div>
+                  ) : (
+                    "Send OTP"
+                  )}
                 </button>
               </>
             )}
@@ -192,7 +205,7 @@ function SignIn() {
                   onChange={(e) => setOtp(e.target.value)}
                   className="px-3 py-2 rounded-lg bg-slate-400"
                 />
-                <button onClick={handleVerifyOtp} className="py-2 text-xl bg-slate-700 rounded-lg text-frost">
+                <button onClick={handleVerifyOtp} className="py-2 text-xl bg-slate-700 rounded-lg text-white">
                   Verify OTP
                 </button>
               </>
@@ -214,7 +227,7 @@ function SignIn() {
                   onChange={(e) => setConfirmNewPassword(e.target.value)}
                   className="px-3 py-2 rounded-lg bg-slate-400"
                 />
-                <button onClick={handleResetPassword} className="py-2 text-xl bg-slate-700 rounded-lg text-frost">
+                <button onClick={handleResetPassword} className="py-2 text-xl bg-slate-700 rounded-lg text-white">
                   Reset Password
                 </button>
               </>
@@ -226,13 +239,6 @@ function SignIn() {
 
         <p className="underline cursor-pointer" onClick={() => setForgotPassword(!forgotPassword)}>
           {forgotPassword ? "Back to Login" : "Forgot your Password?"}
-        </p>
-
-        <p>
-          Don't have an account?{" "}
-          <span onClick={() => navigate("/signup")} className="font-semibold cursor-pointer">
-            Sign Up
-          </span>
         </p>
       </div>
     </div>

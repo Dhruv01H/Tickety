@@ -10,7 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.tickety.Repository.PersonRepository;
 import com.example.tickety.bean.Person;
 import com.example.tickety.service.EmailService;
@@ -32,6 +32,10 @@ public class PersonController {
     @Autowired
     private OtpService otpService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
     private final Map<String, String> otpStorage = new ConcurrentHashMap<>();
 
     // ✅ Sign in 
@@ -49,7 +53,9 @@ public class PersonController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("❌ Email not verified! Please verify your account.");
         }
 
-        if (!p.getPassword().equals(person.getPassword())) {
+        String storedpassword = p.getPassword();
+
+        if (!passwordEncoder.matches(person.getPassword(), storedpassword)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect Password");
         }
 
@@ -61,10 +67,11 @@ public class PersonController {
     @PutMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody Person person) {
         try {
+            person.setPassword(passwordEncoder.encode(person.getPassword()));
             String token = emailService.sendVerificationEmail(person.getEmail());
             person.setVerificationtoken(token);
             personRepository.save(person);
-            return ResponseEntity.ok("User Registration Successful. Please verify your email.");
+            return ResponseEntity.ok("User Registration Successful");
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email Already Exists");
         } catch (Exception e) {
@@ -141,7 +148,7 @@ public class PersonController {
 
         if (optionalPerson.isPresent()) {
             Person person = optionalPerson.get();
-            person.setPassword(newPassword); // Update password
+            person.setPassword(passwordEncoder.encode(newPassword)); // Update password
 
             personRepository.save(person); // Save updated password
 

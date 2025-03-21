@@ -35,9 +35,6 @@ public class Person implements Serializable {
     @Column
     private String dob;
 
-    @Column(nullable = false)
-    private String phoneNumber;
-
     @Column
     private String address;
 
@@ -119,14 +116,6 @@ public class Person implements Serializable {
 
     public void setDob(String dob) {
         this.dob = dob;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
     }
 
     public String getAddress() {

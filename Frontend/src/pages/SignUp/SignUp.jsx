@@ -5,84 +5,110 @@ import axios from "axios";
 function SignUp() {
   const navigate = useNavigate();
   const [error, setError] = useState("");
-  const [step, setStep] = useState(1); // Step 1: Signup Form, Step 2: OTP Verification
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleForm = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    
     const formData = new FormData(e.target);
     const obj = Object.fromEntries(formData.entries());
 
     if (obj.password !== obj.confirmpassword) {
-      alert("Passwords do not match!");
+      alert("Password does not match");
+      setLoading(false);
       return;
     }
 
     try {
-      setEmail(obj.email); // Save email for OTP verification
-      const response = await axios.post("http://localhost:8080/api/auth/send-otp", { email: obj.email });
-      if (response.data === "OTP Sent") {
-        setStep(2); // Move to OTP verification step
-      }
-    } catch (error) {
-      console.error("Error:", error.response?.data || error.message);
-      setError("Error sending OTP. Try again.");
-    }
-  };
+      const response = await axios.put("http://localhost:8080/api/auth/signup", obj, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-  const handleOtpVerification = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post("http://localhost:8080/api/auth/verify-otp", { email, otp });
-      if (response.data === "OTP Verified") {
-        alert("Registration successful! Please sign in.");
+      if (response.data === "User Registration Successful") {
+        setShowPopup(true);
+        setTimeout(() => {
+          setShowPopup(false);
+          navigate("/signin");
+        }, 3000);
+      } else if (response.data === "Email Already Exists") {
+        alert("Email Already Exists. Please Sign In.");
         navigate("/signin");
-      } else {
-        setError("Invalid OTP. Try again.");
       }
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
-      setError("Error verifying OTP. Try again.");
+      setError("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="flex flex-col items-center px-6 py-6 rounded-2xl bg-slate-300 min-w-[370px]">
-        {step === 1 ? (
+    <>
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 className="text-lg font-semibold mb-2">Verification Link Sent!</h2>
+            <p className="text-gray-600">Check your email to verify your account.</p>
+          </div>
+        </div>
+      )}
+
+      <div className="flex items-center justify-center h-screen">
+        <div className="flex flex-col items-center px-6 py-6 rounded-2xl bg-slate-300 min-w-[370px]">
           <form onSubmit={handleForm} className="flex flex-col gap-4 mb-8">
             <h1 className="mb-4 text-3xl font-bold">Sign Up</h1>
-            <InputField label="Username" name="name" type="text" required />
-            <InputField label="E-mail" name="email" type="email" required />
-            <InputField label="Phone" name="phone" type="tel" minLength={10} maxLength={10} required />
-            <InputField label="Password" name="password" type="password" minLength={8} maxLength={14} required />
-            <InputField label="Confirm Password" name="confirmpassword" type="password" minLength={8} maxLength={14} required />
-            <button type="submit" className="py-1.5 text-xl rounded-xl font-medium bg-slate-700 text-frost">Send OTP</button>
-          </form>
-        ) : (
-          <form onSubmit={handleOtpVerification} className="flex flex-col gap-4 mb-8">
-            <h1 className="mb-4 text-3xl font-bold">OTP Verification</h1>
-            <p className="text-lg">Enter the OTP sent to {email}</p>
-            <InputField label="OTP" name="otp" type="text" value={otp} onChange={(e) => setOtp(e.target.value)} required />
-            <button type="submit" className="py-1.5 text-xl rounded-xl font-medium bg-green-600 text-white">Verify OTP</button>
-          </form>
-        )}
-        {error && <p className="text-red-500">{error}</p>}
-        <p>
-          Already have an account? <span onClick={() => navigate("/signin")} className="font-semibold cursor-pointer">Sign In</span>
-        </p>
-      </div>
-    </div>
-  );
-}
 
-function InputField({ label, name, type, ...props }) {
-  return (
-    <div className="flex flex-col items-start gap-2 mb-1">
-      <label htmlFor={name} className="text-lg">{label}</label>
-      <input type={type} name={name} placeholder={label} className="w-full px-3 py-1 text-xl rounded-lg text-frost outline-0 bg-slate-400" {...props} />
-    </div>
+            <div className="flex flex-col items-start gap-2 mb-1">
+              <label htmlFor="Username" className="text-lg">Username</label>
+              <input type="text" name="name" required placeholder="Username" className="w-full px-3 py-1 text-xl rounded-lg bg-slate-400 outline-0" />
+            </div>
+
+            <div className="flex flex-col items-start gap-2 mb-1">
+              <label htmlFor="Email" className="text-lg">E-mail</label>
+              <input type="email" name="email" required placeholder="E-mail" className="w-full px-3 py-1 text-xl rounded-lg bg-slate-400 outline-0" />
+            </div>
+
+            <div className="flex flex-col items-start gap-2 mb-1">
+              <label htmlFor="Phone" className="text-lg">Phone</label>
+              <input type="tel" name="phone" required minLength={10} maxLength={10} placeholder="Phone" className="w-full px-3 py-1 text-xl rounded-lg bg-slate-400 outline-0" />
+            </div>
+
+            <div className="flex flex-col items-start gap-2 mb-1">
+              <label htmlFor="Password" className="text-lg">Password</label>
+              <input type="password" name="password" required minLength={8} maxLength={14} placeholder="Password" className="w-full px-3 py-1 text-xl rounded-lg bg-slate-400 outline-0" />
+            </div>
+
+            <div className="flex flex-col items-start gap-2 mb-3">
+              <label htmlFor="Confirm" className="text-lg">Confirm Password</label>
+              <input type="password" name="confirmpassword" required minLength={8} maxLength={14} placeholder="Confirm Password" className="w-full px-3 py-1 text-xl rounded-lg bg-slate-400 outline-0" />
+            </div>
+
+            <button type="submit" disabled={loading} className="py-1.5 text-xl rounded-xl font-medium bg-slate-700 text-white flex justify-center items-center">
+              {loading ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10" strokeWidth="4" strokeOpacity="0.25"></circle>
+                    <path d="M4 12a8 8 0 018-8m4 4a8 8 0 01-8 8" strokeWidth="4"></path>
+                  </svg>
+                  Registering...
+                </span>
+              ) : (
+                "Sign Up"
+              )}
+            </button>
+          </form>
+
+          <p>
+            Already have an account? {" "}
+            <span onClick={() => navigate("/signin")} className="font-semibold cursor-pointer">Sign In</span>
+          </p>
+        </div>
+      </div>
+    </>
   );
 }
 
