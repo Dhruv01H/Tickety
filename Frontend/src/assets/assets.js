@@ -24,7 +24,8 @@ import event5 from "./event5.jpg";
 import posterBanner from "./poster_banner.jpg";
 import award1 from "./awards1.png";
 import award2 from "./awards2.png";
-import aboutinfo from "./about.jpg"
+import aboutinfo from "./about.jpg";
+import abstractBg from "./abstractbg.jpg";
 
 import bycicle from "./bycicle.png";
 import car from "./car.png";
@@ -61,6 +62,7 @@ export const assets = {
   award1,
   award2,
   aboutinfo,
+  abstractBg,
 
   bycicle,
   car,
