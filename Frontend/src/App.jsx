@@ -9,13 +9,14 @@ import AppContextProvider from "./context/AppContext.jsx";
 function App() {
 
   const location = useLocation()
-  const footerRoutes = ["/ticket", "/signin"]
-  const navRoutes = ["/ticket", "/signin"]
+  const footerRoutes = ["/ticket", "/signin", "/signup"]
+  const navRoutes = ["/ticket", "/signin", "/signup"]
 
   return (
     <AppContextProvider>
       <ToastContainer position='bottom-right'/>
-      {!navRoutes.includes(location.pathname) && <Footer />}      <Routes>
+      {!navRoutes.includes(location.pathname) && <Navbar />}      
+      <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/signin" element={<SignIn />} />
