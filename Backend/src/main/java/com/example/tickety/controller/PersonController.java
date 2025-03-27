@@ -1,129 +1,194 @@
-    package com.example.tickety.controller;
+package com.example.tickety.controller;
 
-    import java.util.Optional;
-    import org.springframework.beans.factory.annotation.Autowired;
-    import org.springframework.dao.DataIntegrityViolationException;
-    import org.springframework.http.HttpStatus;
-    import org.springframework.http.ResponseEntity;
-    import org.springframework.web.bind.annotation.CrossOrigin;
-    import org.springframework.web.bind.annotation.GetMapping;
-    import org.springframework.web.bind.annotation.PostMapping;
-    import org.springframework.web.bind.annotation.PutMapping;
-    import org.springframework.web.bind.annotation.RequestBody;
-    import org.springframework.web.bind.annotation.RequestMapping;
-    import org.springframework.web.bind.annotation.RequestParam;
-    import org.springframework.web.bind.annotation.RestController;
-    // import com.example.*;
-    import com.example.tickety.Repository.PersonRepository;
-    import com.example.tickety.bean.Person;
-    import com.example.tickety.service.EmailService;
-    import jakarta.servlet.http.HttpSession;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
-    @RestController
-    @RequestMapping("/api/auth")
-    @CrossOrigin(origins = "http://localhost:5173")
-    public class PersonController {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import com.example.tickety.Repository.PersonRepository;
+import com.example.tickety.bean.Person;
+import com.example.tickety.service.EmailService;
+import com.example.tickety.service.OtpService;
 
-        @Autowired
-        public PersonRepository personRepository;
+import jakarta.servlet.http.HttpSession;
 
-        @Autowired
-        private EmailService emailService;
+@RestController
+@RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:5173")
+public class PersonController {
 
-        @PostMapping("/signin")
-        public boolean signin(@RequestBody Person person , HttpSession session) {
-            String password = person.getPassword();
-            String email = person.getEmail();
+    @Autowired
+    private PersonRepository personRepository;
 
-            Optional<Person> optionalPerson = personRepository.findByEmail(email);
+    @Autowired
+    private EmailService emailService;
 
-            if (optionalPerson.isPresent()) {
-                Person p = optionalPerson.get();
+    @Autowired
+    private OtpService otpService;
 
-                if (!p.getIs_verified()) {
-                    // return "❌ Email not verified! Please check your email and verify your account.";
-                    return false;
-                }
-                
-                if (p.getPassword().equals(password)) {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-                    session.setAttribute("user", p);
-                    return true;
-                }
-                return false;
-            }
 
-            return false;
+    private final Map<String, String> otpStorage = new ConcurrentHashMap<>();
+
+    // ✅ Sign in 
+    @PostMapping("/signin")
+    public ResponseEntity<String> signin(@RequestBody Person person, HttpSession session) {
+        Optional<Person> optionalPerson = personRepository.findByEmail(person.getEmail());
+
+        if (optionalPerson.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Email or Password");
         }
 
-        @PutMapping("/signup")
-        public String signup(@RequestBody Person person) {
-            try {
-                System.out.println("Hiiiii");
-                String token = emailService.sendVerificationEmail(person.getEmail());
-                person.setVerificationtoken(token);
-                Person response = personRepository.save(person);
-                return "User Registration Successful";
-            } catch (DataIntegrityViolationException e) {
-                return "Email Already Exists";
+        Person p = optionalPerson.get();
 
-            } catch (Exception e) {
-                return "Something went Wrong";
-            }
+        if (!p.getIs_verified()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("❌ Email not verified! Please verify your account.");
         }
 
-    @GetMapping("/verify")
-        public String verifyEmail(@RequestParam("token") String token) {
-            Optional<Person> person = personRepository.findByVerificationToken(token);
+        String storedpassword = p.getPassword();
 
-            if (person.isPresent()) {
-                Person verifiedUser = person.get();
-                verifiedUser.setIs_verified(true);
-                verifiedUser.setVerificationtoken(null); // ✅ Clear token after verification
-                personRepository.save(verifiedUser);
-                return "✅ Email verified! You can now log in.";
-            }
-
-            return "❌ Invalid verification link!";
+        if (!passwordEncoder.matches(person.getPassword(), storedpassword)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect Password");
         }
 
-        // ✅ Check if the user is logged in
-            @GetMapping("/session")
-            public ResponseEntity<?> getSession(HttpSession session) {
-                Person user = (Person) session.getAttribute("user");
-                        
-            if (user == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user logged in");
-            }
-
-            return ResponseEntity.ok(user); 
-                // return (user != null) ? "Logged in as: " + user : "No active session";
-            }
-
-            // ✅ Logout (destroy session)
-            @GetMapping("/logout")
-            public String logout(HttpSession session) {
-                session.invalidate(); // ❌ Destroy session
-                return "Session ended. You have been logged out.";
-            }
-
-            @PutMapping("/updatedata")
-            public String updateData(@RequestBody Person person) {
-                Optional<Person> existing = personRepository.findByEmail(person.getEmail());
-                if (existing.isPresent()) {
-                    Person p = existing.get();
-                    p.setName(person.getName());
-                    p.setGender(person.getGender());
-                    p.setEmail(person.getEmail());
-                    p.setPhone(person.getPhone());
-                    p.setDob(person.getDob());
-                    p.setAddress(person.getAddress());
-                    p.setState(person.getState());
-                    p.setDistrict(person.getDistrict());
-                    personRepository.save(p);
-                    return "Update Successful";
-                }
-                return "User Not Found";
-
+        session.setAttribute("user", p);
+        return ResponseEntity.ok("Login Successful");
     }
+
+    // ✅ Sign up
+    @PutMapping("/signup")
+    public ResponseEntity<String> signup(@RequestBody Person person) {
+        try {
+            person.setPassword(passwordEncoder.encode(person.getPassword()));
+            String token = emailService.sendVerificationEmail(person.getEmail());
+            person.setVerificationtoken(token);
+            personRepository.save(person);
+            return ResponseEntity.ok("User Registration Successful");
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email Already Exists");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong. Try again.");
+        }
+    }
+
+    // ✅ Email Verification
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyEmail(@RequestParam("token") String token) {
+        Optional<Person> person = personRepository.findByVerificationToken(token);
+
+        if (person.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ Invalid verification link!");
+        }
+
+        Person verifiedUser = person.get();
+        verifiedUser.setIs_verified(true);
+        verifiedUser.setVerificationtoken(null); // ✅ Clear token after verification
+        personRepository.save(verifiedUser);
+
+        return ResponseEntity.ok("✅ Email verified! You can now log in.");
+    }
+
+    // ✅ Check User Session
+    @GetMapping("/session")
+    public ResponseEntity<?> getSession(HttpSession session) {
+        Person user = (Person) session.getAttribute("user");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user logged in");
+        }
+        return ResponseEntity.ok(user);
+    }
+
+    // ✅ Logout
+    @GetMapping("/logout")
+    public ResponseEntity<String> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok("Session ended. You have been logged out.");
+    }
+
+    // ✅ Update User Data
+    @PutMapping("/updatedata")
+    public ResponseEntity<String> updateData(@RequestBody Person person) {
+        Optional<Person> existing = personRepository.findByEmail(person.getEmail());
+
+        if (existing.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
+        }
+
+        Person p = existing.get();
+        p.setName(person.getName());
+        p.setGender(person.getGender());
+        p.setPhone(person.getPhone());
+        p.setDob(person.getDob());
+        p.setAddress(person.getAddress());
+        p.setState(person.getState());
+        p.setDistrict(person.getDistrict());
+
+        personRepository.save(p);
+        return ResponseEntity.ok("Update Successful");
+    }
+
+    @PostMapping("/forget-password")
+    public ResponseEntity<String> forgetPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String newPassword = request.get("password");
+
+        if (email == null || newPassword == null || email.isEmpty() || newPassword.isEmpty()) {
+            return ResponseEntity.badRequest().body("Email and password are required");
+        }
+
+        Optional<Person> optionalPerson = personRepository.findByEmail(email);
+
+        if (optionalPerson.isPresent()) {
+            Person person = optionalPerson.get();
+            person.setPassword(passwordEncoder.encode(newPassword)); // Update password
+
+            personRepository.save(person); // Save updated password
+
+            return ResponseEntity.ok("Password Reset Successful");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+    }
+    
+
+
+   @PostMapping("/sendOtp")
+   public ResponseEntity<?> sendOtp(@RequestBody Map<String, String> request) {
+       String email = request.get("email");
+
+       if (email == null || email.isEmpty()) {
+           return ResponseEntity.badRequest().body("Email is required!");
+       }
+
+       String otp = otpService.generateOtp(email);
+       return ResponseEntity.ok("OTP sent successfully!");
+   }
+   @PostMapping("/verifyOtp")
+    public ResponseEntity<?> verifyOtp(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String otp = request.get("otp");
+        System.out.println("Email: " + email + ", OTP: " + otp);
+
+        if (email == null || otp == null) {
+            return ResponseEntity.badRequest().body("Email and OTP are required!");
+        }
+
+        boolean isValid = otpService.verifyOtp(email, otp);
+        System.out.println(isValid);
+
+        if (isValid) {
+            return ResponseEntity.ok(Map.of("verified", true, "message", "OTP verified successfully!"));
+        } else {
+            return ResponseEntity.badRequest().body(Map.of("verified", false, "message", "Invalid OTP!"));
+        }
+    }
+
 }

@@ -2,12 +2,19 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
 
 function Navbar() {
   const { user, setUser } = useContext(AppContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrollingUp, setIsScrollingUp] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [popupMessage, setPopupMessage] = useState(null);
+
+  const showPopup = (message) => {
+    setPopupMessage(message);
+    setTimeout(() => setPopupMessage(null), 2000);
+  };
 
 
   const logout = async (e) => {
@@ -20,9 +27,9 @@ function Navbar() {
       });
   
       if (response.status === 200) {
-        alert("Successful Logout");
+        showPopup("Successful Logout");
         setUser(null);  // ✅ Clear the user state
-        window.location.href = "/signin"; // ✅ Redirect to Sign-in Page
+        setTimeout(() => (window.location.href = "/signin"), 2000);
       }
     } catch (error) {
       alert("Logout Failed!!!");
@@ -54,6 +61,7 @@ function Navbar() {
 
   return (
     <>
+    
       {/* ========= Background Blur ============= */}
       <div
         className={`fixed inset-0 bg-black/50 transition-opacity duration-500 ${
@@ -63,6 +71,21 @@ function Navbar() {
       ></div>
 
       {/* ========= Desktop Menu ============= */}
+      {/* Styled Popup Animation */}
+<AnimatePresence>
+  {popupMessage && (
+    <motion.div
+      initial={{ opacity: 0, y: -30, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -30, scale: 0.9 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+      className="fixed top-10 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-6 py-3 rounded-lg shadow-lg shadow-yellow-500/50 border border-white-400 text-lg font-semibold z-50"
+    >
+      {popupMessage}
+    </motion.div>
+  )}
+</AnimatePresence>
+
       <nav
         className={`fixed top-0 left-0 z-10 flex items-center justify-between w-full px-10 py-5 bg-black/60 border-b-[1px] border-frost lg:px-28 backdrop-blur-xs transition-transform duration-300 ease-in-out ${
           isScrollingUp ? "translate-y-0" : "-translate-y-full"
