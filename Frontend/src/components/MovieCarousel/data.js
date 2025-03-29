@@ -2,7 +2,7 @@ import { assets } from "../../assets/assets";
 
 const movies = [
     {
-        id: 1,
+        id: 1,  
         title: "Shutter Island",
         movieType: "Suspense",
         duration: "180 Mins",

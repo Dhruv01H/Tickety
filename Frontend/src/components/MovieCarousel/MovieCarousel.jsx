@@ -24,11 +24,12 @@ function MovieCarousel() {
       {/* Static Carousel for movies available now */}
       <div className="flex flex-col items-center gap-5 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {movies.map((movie) => (
-          <div key={movie.id} className="relative overflow-hidden group transition-all duration-700 border-[5px] border-transparent rounded-md hover:border-primary">
+          <div onClick={() => navigate("/ticket")} key={movie.id} className="relative overflow-hidden group transition-all duration-700 border-[5px] border-transparent rounded-md hover:border-primary">
             <div className="overflow-hidden">
               <img
                 src={movie.image}
                 alt={movie.title}
+                loading="lazy"
                 className="object-cover w-full h-[28rem] transition-transform duration-700 group-hover:scale-105"
               />
             </div>

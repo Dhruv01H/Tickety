@@ -1,7 +1,11 @@
 import React from "react";
 import data from "./data";
+import { useNavigate } from "react-router-dom";
 
 function EventCarousel() {
+
+  const navigate = useNavigate()
+
   return (
     <div className="px-10 mb-20 md:px-28">
       {/* Heading text for the setion */}
@@ -22,11 +26,12 @@ function EventCarousel() {
       {/* Carousel for events available now */}
       <div className="flex flex-col items-center gap-5 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {data.map((event) => (
-          <div key={event.id} className="relative group overflow-hidden transition-all duration-700 border-[5px] border-transparent rounded-md hover:border-primary">
+          <div onClick={() => navigate("/")} key={event.id} className="relative group overflow-hidden transition-all duration-700 border-[5px] border-transparent rounded-md hover:border-primary">
             <div className="overflow-hidden">
               <img
                 src={event.image}
                 alt={event.name}
+                loading="lazy"
                 className="object-cover w-full h-[28rem] transition-transform duration-700 group-hover:scale-105"
               />
             </div>
