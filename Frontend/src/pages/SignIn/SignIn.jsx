@@ -82,10 +82,6 @@ function SignIn() {
     e.preventDefault();
     console.log("Verifying OTP...");
     try {
-<<<<<<< HEAD
-=======
-
->>>>>>> bf271266397752880c7589302068661e2c4ecd43
         const response = await axios.post("http://localhost:8080/api/auth/verifyOtp", {
             email: email,
             otp: otp
@@ -103,10 +99,6 @@ function SignIn() {
     } catch (error) {
         console.error("Error verifying OTP:", error);
         setMessage(error.response?.data?.message || "Error verifying OTP");
-<<<<<<< HEAD
-=======
-
->>>>>>> bf271266397752880c7589302068661e2c4ecd43
     }
   };
 
