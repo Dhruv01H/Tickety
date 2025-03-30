@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { AppContext } from "../../context/AppContext";
 import { assets } from "../../assets/assets";
@@ -15,6 +15,55 @@ function SignIn() {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+
+  // Add notification component
+  const Notification = ({ message }) => {
+    const [isVisible, setIsVisible] = useState(true);
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+        setTimeout(() => {
+          setShowNotification(false);
+        }, 500);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }, []);
+
+    return (
+      <div 
+        className={`fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-transform duration-500 ease-in-out ${
+          isVisible ? 'translate-x-0' : 'translate-x-[200%]'
+        }`}
+        style={{
+          animation: isVisible ? 'slideIn 0.5s ease-out' : 'slideOut 0.5s ease-in'
+        }}
+      >
+        {message}
+      </div>
+    );
+  };
+
+  // Add this style block at the top of your component, before the return statement
+  const styles = `
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+      }
+      to {
+        transform: translateX(0);
+      }
+    }
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(100%);
+      }
+    }
+  `;
 
   // Handle Sign In
   const handleForm = async (e) => {
@@ -33,6 +82,7 @@ function SignIn() {
       );
 
       if (response.data) {
+        setShowNotification(true);
         setMessage("Successful Login!");
         try {
           const sessionResponse = await axios.get(
@@ -44,7 +94,9 @@ function SignIn() {
 
           if (sessionResponse.status === 200) {
             setUser(sessionResponse.data);
-            navigate("/");
+            setTimeout(() => {
+              navigate("/");
+            }, 1000);
           } else {
             setMessage("Session issue. Try logging in again.");
           }
@@ -156,6 +208,8 @@ function SignIn() {
 
   return (
     <>
+      <style>{styles}</style>
+      {showNotification && <Notification message="Login Successful!" />}
       <div className="flex h-screen">
         <div
           className="hidden w-1/2 h-full bg-center bg-cover md:block"
