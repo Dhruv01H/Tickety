@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.tickety.Repository.PersonRepository;
 import com.example.tickety.bean.Person;
 import com.example.tickety.service.EmailService;
+import com.example.tickety.service.NFTMintingService;
 import com.example.tickety.service.OtpService;
 
 import jakarta.servlet.http.HttpSession;
@@ -34,6 +35,9 @@ public class PersonController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private NFTMintingService nftMintingService;
 
 
     private final Map<String, String> otpStorage = new ConcurrentHashMap<>();
@@ -157,8 +161,6 @@ public class PersonController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
     }
-    
-
 
    @PostMapping("/sendOtp")
    public ResponseEntity<?> sendOtp(@RequestBody Map<String, String> request) {
@@ -171,6 +173,7 @@ public class PersonController {
        String otp = otpService.generateOtp(email);
        return ResponseEntity.ok("OTP sent successfully!");
    }
+  
    @PostMapping("/verifyOtp")
     public ResponseEntity<?> verifyOtp(@RequestBody Map<String, String> request) {
         String email = request.get("email");
@@ -190,5 +193,24 @@ public class PersonController {
             return ResponseEntity.badRequest().body(Map.of("verified", false, "message", "Invalid OTP!"));
         }
     }
+
+    @PostMapping("/mint")
+    public String mintNFT(@RequestBody Map<String, String> request) {
+        String toAddress = request.get("toAddress");
+        String metadataURI = request.get("metadataURI");
+        
+        if (toAddress == null || metadataURI == null) {
+            return "Error: toAddress and metadataURI are required";
+        }
+        
+        try {
+            return nftMintingService.mintNFT(toAddress, metadataURI);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Minting failed: " + e.getMessage(); 
+        }
+    }
+
+
 
 }
