@@ -13,6 +13,7 @@ import SeatPopup from "./SeatPopup/SeatPopup";
 import SeatSelection from "./SeatSelection/SeatSelection";
 import CastAndStory from "./CastAndStory/CastAndStory";
 import MovieSwiper from "./MovieSwiper/MovieSwiper";
+import NowStreaming from "./NowStreaming/NowStreaming";
 
 export { 
     Navbar,
@@ -30,4 +31,5 @@ export {
     SeatSelection,
     CastAndStory,
     MovieSwiper,
+    NowStreaming,
 }

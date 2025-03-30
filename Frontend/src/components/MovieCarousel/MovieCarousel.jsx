@@ -16,7 +16,7 @@ function MovieCarousel() {
             Be sure not to miss these Movies today.
           </p>
         </div>
-        <button className="px-8 py-3 text-2xl font-semibold transition-all duration-500 cursor-pointer rounded-xl bg-gradient-3 hover:scale-105 text-frost max-lg:hidden">
+        <button onClick={() => navigate("/movie")} className="px-8 py-3 text-2xl font-semibold transition-all duration-500 cursor-pointer rounded-xl bg-gradient-3 hover:scale-105 text-frost max-lg:hidden">
           Now showing
         </button>
       </div>

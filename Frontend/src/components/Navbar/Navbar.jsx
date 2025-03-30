@@ -16,19 +16,21 @@ function Navbar() {
     setTimeout(() => setPopupMessage(null), 2000);
   };
 
-
   const logout = async (e) => {
     e.preventDefault();
-  
+
     try {
-      const response = await axios.get("http://localhost:8080/api/auth/logout", {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      });
-  
+      const response = await axios.get(
+        "http://localhost:8080/api/auth/logout",
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+
       if (response.status === 200) {
         showPopup("Successful Logout");
-        setUser(null);  // ✅ Clear the user state
+        setUser(null); // ✅ Clear the user state
         setTimeout(() => (window.location.href = "/signin"), 2000);
       }
     } catch (error) {
@@ -36,7 +38,6 @@ function Navbar() {
       console.error("Logout Error:", error);
     }
   };
-  
 
   const menuToggler = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -61,7 +62,6 @@ function Navbar() {
 
   return (
     <>
-    
       {/* ========= Background Blur ============= */}
       <div
         className={`fixed inset-0 bg-black/50 transition-opacity duration-500 ${
@@ -72,19 +72,19 @@ function Navbar() {
 
       {/* ========= Desktop Menu ============= */}
       {/* Styled Popup Animation */}
-<AnimatePresence>
-  {popupMessage && (
-    <motion.div
-      initial={{ opacity: 0, y: -30, scale: 0.9 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -30, scale: 0.9 }}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
-      className="fixed top-10 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-6 py-3 rounded-lg shadow-lg shadow-yellow-500/50 border border-white-400 text-lg font-semibold z-50"
-    >
-      {popupMessage}
-    </motion.div>
-  )}
-</AnimatePresence>
+      <AnimatePresence>
+        {popupMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -30, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -30, scale: 0.9 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            className="fixed z-50 px-6 py-3 text-lg font-semibold text-white transform -translate-x-1/2 border rounded-lg shadow-lg top-10 left-1/2 bg-black/80 shadow-yellow-500/50 border-white-400"
+          >
+            {popupMessage}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <nav
         className={`fixed top-0 left-0 z-10 flex items-center justify-between w-full px-10 py-5 bg-black/60 border-b-[1px] border-frost lg:px-28 backdrop-blur-xs transition-transform duration-300 ease-in-out ${
@@ -141,24 +141,22 @@ function Navbar() {
               <li>Join Now</li>
             </Link>
           ) : (
-            
-            <><Link
+            <>
+              <Link
                 to={"/profile"}
                 className="font-semibold transition-all duration-700 decoration-primary hover:text-primary hover:underline underline-offset-4"
               >
                 <li>Profile</li>
                 {/* <i className="text-xl rounded-[25%] border p-2.5 ri-user-3-fill"></i> */}
-              </Link><Link
-              onClick={logout}
+              </Link>
+              <Link
+                onClick={logout}
                 className="font-semibold transition-all duration-700 decoration-primary hover:text-primary hover:underline underline-offset-4"
               >
                 <li>Logout</li>
-                </Link></>
-            
-  
-            
+              </Link>
+            </>
           )}
-          
         </menu>
 
         {/* ========= Menu Togglers ============= */}
