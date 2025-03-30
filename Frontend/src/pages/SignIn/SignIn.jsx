@@ -82,6 +82,10 @@ function SignIn() {
     e.preventDefault();
     console.log("Verifying OTP...");
     try {
+<<<<<<< HEAD
+=======
+
+>>>>>>> bf271266397752880c7589302068661e2c4ecd43
         const response = await axios.post("http://localhost:8080/api/auth/verifyOtp", {
             email: email,
             otp: otp
@@ -99,6 +103,10 @@ function SignIn() {
     } catch (error) {
         console.error("Error verifying OTP:", error);
         setMessage(error.response?.data?.message || "Error verifying OTP");
+<<<<<<< HEAD
+=======
+
+>>>>>>> bf271266397752880c7589302068661e2c4ecd43
     }
   };
 
@@ -128,9 +136,11 @@ function SignIn() {
         }, 1000); // Give user time to see the success message
       }
     } catch (error) {
+
       console.error("Password Reset Error:", error.response?.data || error.message);
       setMessage(error.response?.data?.message || "Failed to reset password. Try again.");
       // Don't change form state on error
+
     }
   };
 
@@ -143,8 +153,10 @@ function SignIn() {
         ></div>
 
         <div className="flex flex-col items-center justify-center w-full px-8 md:w-1/2 md:px-12">
+
           {formState === "signin" ? (
             // Sign In Form
+
             <>
               <h2 className="mb-2 text-3xl font-semibold text-gray-800">
                 Sign In to Tickety
@@ -192,8 +204,10 @@ function SignIn() {
                 </button>
               </form>
             </>
+
           ) : formState === "forgot" ? (
             // Forgot Password Email Form
+
             <>
               <div className="w-full max-w-sm">
                 <h2 className="mb-4 text-3xl font-semibold text-gray-800">
@@ -219,10 +233,30 @@ function SignIn() {
                   <button
                     onClick={handleSendOtp}
                     disabled={loading}
-                    className="w-full py-2 font-medium text-center text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary"
+                    className="relative w-full py-2 font-medium text-center text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {loading ? (
-                      <div className="w-5 h-5 border-t-2 border-white border-solid rounded-full animate-spin"></div>
+                      <div className="flex items-center justify-center">
+                        <div className="w-6 h-6 mr-2">
+                          <svg className="animate-spin" viewBox="0 0 24 24">
+                            <circle 
+                              className="opacity-25" 
+                              cx="12" 
+                              cy="12" 
+                              r="10" 
+                              stroke="currentColor" 
+                              strokeWidth="4"
+                              fill="none"
+                            />
+                            <path 
+                              className="opacity-75" 
+                              fill="currentColor" 
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                          </svg>
+                        </div>
+                        <span>Sending OTP...</span>
+                      </div>
                     ) : (
                       "Send OTP"
                     )}
@@ -269,7 +303,7 @@ function SignIn() {
                   Set New Password
                 </h2>
                 <form>
-                  <div className="mb-4">
+                  <div className="mb-6">
                     <label
                       htmlFor="newpassword"
                       className="font-medium text-gray-600"
@@ -279,7 +313,7 @@ function SignIn() {
                     <input
                       type="password"
                       name="newpassword"
-                      placeholder=""
+                      placeholder="**********"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       required
@@ -288,7 +322,7 @@ function SignIn() {
                       className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
                     />
                   </div>
-                  <div>
+                  <div className="mb-8">
                     <label
                       htmlFor="confnewpassword"
                       className="font-medium text-gray-600"
@@ -298,7 +332,7 @@ function SignIn() {
                     <input
                       type="password"
                       name="confnewpassword"
-                      placeholder=""
+                      placeholder="**********"
                       value={confirmNewPassword}
                       onChange={(e) =>
                         setConfirmNewPassword(e.target.value)
@@ -312,7 +346,7 @@ function SignIn() {
 
                   <button
                     onClick={handleResetPassword}
-                    className="w-full py-2 font-medium text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary"
+                    className="w-full py-3 font-medium text-white transition duration-300 rounded-lg shadow-md cursor-pointer bg-primary hover:bg-secondary hover:shadow-lg"
                   >
                     Reset Password
                   </button>
@@ -352,7 +386,9 @@ function SignIn() {
             <div className="flex-1 border-t border-gray-300"></div>
           </div>
 
+
           <p className="text-red-500">{message}</p>
+
         </div>
       </div>
     </>
