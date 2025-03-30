@@ -7,6 +7,7 @@ import About from "./About/About";
 import FAQ from "./FAQ/FAQ";
 import BookTickets from "./BookTickets/BookTickets";
 import Charlie from "./Charlie/Charlie";
+import Movies from "./Movies/Movies";
 
 export { 
     Home,
@@ -17,5 +18,6 @@ export {
     About,
     FAQ,
     BookTickets,
-    Charlie
+    Charlie,
+    Movies,
 }

@@ -72,25 +72,18 @@ function SignIn() {
     const obj = Object.fromEntries(formData.entries());
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/auth/signin",
-        obj,
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
+      const response = await axios.post("http://localhost:8080/api/auth/signin", obj, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
 
       if (response.data) {
         setShowNotification(true);
         setMessage("Successful Login!");
         try {
-          const sessionResponse = await axios.get(
-            "http://localhost:8080/api/auth/session",
-            {
-              withCredentials: true,
-            }
-          );
+          const sessionResponse = await axios.get("http://localhost:8080/api/auth/session", {
+            withCredentials: true,
+          });
 
           if (sessionResponse.status === 200) {
             setUser(sessionResponse.data);
@@ -123,19 +116,13 @@ function SignIn() {
     setLoading(true);
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/auth/sendOtp",
-        { email }
-      );
+      const response = await axios.post("http://localhost:8080/api/auth/sendOtp", { email });
       if (response.status === 200) {
         setFormState("otp");
         setMessage("OTP sent to your email.");
       }
     } catch (error) {
-      console.error(
-        "Error sending OTP:",
-        error.response?.data || error.message
-      );
+      console.error("Error sending OTP:", error.response?.data || error.message);
       setMessage("Failed to send OTP. Try again.");
     }
 
@@ -147,7 +134,6 @@ function SignIn() {
     e.preventDefault();
     console.log("Verifying OTP...");
     try {
-
         const response = await axios.post("http://localhost:8080/api/auth/verifyOtp", {
             email: email,
             otp: otp
@@ -165,7 +151,6 @@ function SignIn() {
     } catch (error) {
         console.error("Error verifying OTP:", error);
         setMessage(error.response?.data?.message || "Error verifying OTP");
-
     }
   };
 
@@ -178,13 +163,10 @@ function SignIn() {
 
     try {
       console.log("Resetting password for:", email);
-      const response = await axios.post(
-        "http://localhost:8080/api/auth/forget-password",
-        {
-          email,
-          password: newPassword,
-        }
-      );
+      const response = await axios.post("http://localhost:8080/api/auth/forget-password", {
+        email,
+        password: newPassword,
+      });
 
       if (response.status === 200) {
         setMessage("Password Reset Successful! Please login.");
@@ -252,7 +234,7 @@ function SignIn() {
                   <input
                     type="password"
                     name="password"
-                    placeholder="********"
+                    placeholder=""
                     className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
                     required
                     minLength={8}
@@ -297,7 +279,7 @@ function SignIn() {
                   <button
                     onClick={handleSendOtp}
                     disabled={loading}
-                    className="w-full py-2 font-medium text-center text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary disabled:opacity-70 disabled:cursor-not-allowed relative"
+                    className="relative w-full py-2 font-medium text-center text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {loading ? (
                       <div className="flex items-center justify-center">
@@ -410,7 +392,7 @@ function SignIn() {
 
                   <button
                     onClick={handleResetPassword}
-                    className="w-full py-3 font-medium text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary shadow-md hover:shadow-lg"
+                    className="w-full py-3 font-medium text-white transition duration-300 rounded-lg shadow-md cursor-pointer bg-primary hover:bg-secondary hover:shadow-lg"
                   >
                     Reset Password
                   </button>
