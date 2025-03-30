@@ -8,15 +8,13 @@ function SignIn() {
   const navigate = useNavigate();
   const { setUser } = useContext(AppContext);
   const [error, setError] = useState("");
-  const [forgotPassword, setForgotPassword] = useState(false);
+  const [formState, setFormState] = useState("signin"); // "signin", "forgot", "otp", "newpassword"
   const [email, setEmail] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
-  const [otpVerified, setOtpVerified] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
 
   // Handle Sign In
   const handleForm = async (e) => {
@@ -70,7 +68,7 @@ function SignIn() {
       return;
     }
 
-    setLoading(true); // Start loading
+    setLoading(true);
 
     try {
       const response = await axios.post(
@@ -78,7 +76,7 @@ function SignIn() {
         { email }
       );
       if (response.status === 200) {
-        setOtpSent(true);
+        setFormState("otp");
         setMessage("OTP sent to your email.");
       }
     } catch (error) {
@@ -89,34 +87,33 @@ function SignIn() {
       setMessage("Failed to send OTP. Try again.");
     }
 
-    setLoading(false); // Stop loading
+    setLoading(false);
   };
 
   // Verify OTP
-  const handleVerifyOtp = async () => {
-    if (!otp) {
-      setMessage("Please enter the OTP.");
-      return;
-    }
-
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    console.log("Verifying OTP...");
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/auth/verifyOtp",
-        { email, otp }
-      );
 
-      if (response.status === 200) {
-        setOtpVerified(true);
-        setMessage("OTP Verified! Enter your new password.");
-      } else {
-        setMessage("Incorrect OTP. Try again.");
-      }
+        const response = await axios.post("http://localhost:8080/api/auth/verifyOtp", {
+            email: email,
+            otp: otp
+        });
+        console.log("OTP verification response:", response.data);
+        
+        if (response.data.verified) {
+            console.log("OTP verified successfully");
+            setMessage(response.data.message);
+            setFormState("newpassword");
+        } else {
+            console.log("OTP verification failed");
+            setMessage(response.data.message);
+        }
     } catch (error) {
-      console.error(
-        "OTP Verification Error:",
-        error.response?.data || error.message
-      );
-      setMessage("Invalid OTP.");
+        console.error("Error verifying OTP:", error);
+        setMessage(error.response?.data?.message || "Error verifying OTP");
+
     }
   };
 
@@ -139,21 +136,21 @@ function SignIn() {
 
       if (response.status === 200) {
         setMessage("Password Reset Successful! Please login.");
-
-        // Reset State
-        setForgotPassword(false);
-        setOtpSent(false);
-        setOtpVerified(false);
-        setNewPassword("");
-        setConfirmNewPassword("");
-        setEmail("");
+        // Only reset form state after successful password reset
+        setTimeout(() => {
+          setFormState("signin");
+          setEmail("");
+          setOtp("");
+          setNewPassword("");
+          setConfirmNewPassword("");
+        }, 1000); // Give user time to see the success message
       }
     } catch (error) {
-      console.error(
-        "Password Reset Error:",
-        error.response?.data || error.message
-      );
-      setMessage("Failed to reset password. Try again.");
+
+      console.error("Password Reset Error:", error.response?.data || error.message);
+      setMessage(error.response?.data?.message || "Failed to reset password. Try again.");
+      // Don't change form state on error
+
     }
   };
 
@@ -166,8 +163,10 @@ function SignIn() {
         ></div>
 
         <div className="flex flex-col items-center justify-center w-full px-8 md:w-1/2 md:px-12">
-          {!forgotPassword ? (
-            // Form for Sign In
+
+          {formState === "signin" ? (
+            // Sign In Form
+
             <>
               <h2 className="mb-2 text-3xl font-semibold text-gray-800">
                 Sign In to Tickety
@@ -215,128 +214,153 @@ function SignIn() {
                 </button>
               </form>
             </>
-          ) : (
-            // Forgot Password Flow
+
+          ) : formState === "forgot" ? (
+            // Forgot Password Email Form
+
             <>
               <div className="w-full max-w-sm">
                 <h2 className="mb-4 text-3xl font-semibold text-gray-800">
                   Forgot Password?
                 </h2>
+                <form>
+                  <label
+                    htmlFor="femail"
+                    className="font-medium text-gray-600"
+                  >
+                    Email
+                  </label>
+                  <input
+                    name="femail"
+                    type="email"
+                    required
+                    placeholder="example@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-4 py-2 mt-1 mb-6 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
+                  />
 
-                {!otpSent && (
-                  <>
-                    <form>
-                      <label
-                        htmlFor="femail"
-                        className="font-medium text-gray-600"
-                      >
-                        Email
-                      </label>
-                      <input
-                        name="femail"
-                        type="email"
-                        required
-                        placeholder="example@email.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-2 mt-1 mb-6 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
-                      />
-
-                      <button
-                        onClick={handleSendOtp}
-                        disabled={loading}
-                        className="w-full py-2 font-medium text-center text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary"
-                      >
-                        {loading ? (
-                          <sapn className="w-5 h-5 border-t-2 border-white border-solid rounded-full animate-spin"></sapn>
-                        ) : (
-                          "Send OTP"
-                        )}
-                      </button>
-                    </form>
-                  </>
-                )}
-
-                {otpSent && !otpVerified && (
-                  <>
-                    <form>
-                      <label
-                        htmlFor="enter"
-                        className="font-medium text-gray-600"
-                      >
-                        Email
-                      </label>
-                      <input
-                        type="text"
-                        name="enter"
-                        placeholder="Enter OTP"
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value)}
-                        className="w-full px-4 py-2 mt-1 mb-6 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
-                      />
-                      <button
-                        onClick={handleVerifyOtp}
-                        className="w-full py-2 font-medium text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary"
-                      >
-                        Verify OTP
-                      </button>
-                    </form>
-                  </>
-                )}
-
-                {otpVerified && (
-                  <>
-                    <form>
-                      <div className="mb-4">
-                        <label
-                          htmlFor="newpassword"
-                          className="font-medium text-gray-600"
-                        >
-                          New Password
-                        </label>
-                        <input
-                          type="newpassword"
-                          placeholder="**********"
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          required
-                          minLength={8}
-                          maxLength={14}
-                          className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
-                        />
+                  <button
+                    onClick={handleSendOtp}
+                    disabled={loading}
+                    className="w-full py-2 font-medium text-center text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary disabled:opacity-70 disabled:cursor-not-allowed relative"
+                  >
+                    {loading ? (
+                      <div className="flex items-center justify-center">
+                        <div className="w-6 h-6 mr-2">
+                          <svg className="animate-spin" viewBox="0 0 24 24">
+                            <circle 
+                              className="opacity-25" 
+                              cx="12" 
+                              cy="12" 
+                              r="10" 
+                              stroke="currentColor" 
+                              strokeWidth="4"
+                              fill="none"
+                            />
+                            <path 
+                              className="opacity-75" 
+                              fill="currentColor" 
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                          </svg>
+                        </div>
+                        <span>Sending OTP...</span>
                       </div>
-                      <div>
-                        <label
-                          htmlFor="confnewpassword"
-                          className="font-medium text-gray-600"
-                        >
-                          Confirm New Password
-                        </label>
-                        <input
-                          type="confnewpassword"
-                          placeholder="**********"
-                          value={confirmNewPassword}
-                          onChange={(e) =>
-                            setConfirmNewPassword(e.target.value)
-                          }
-                          required
-                          minLength={8}
-                          maxLength={14}
-                          className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
-                        />
-                      </div>
+                    ) : (
+                      "Send OTP"
+                    )}
+                  </button>
+                </form>
+              </div>
+            </>
+          ) : formState === "otp" ? (
+            // OTP Verification Form
+            <>
+              <div className="w-full max-w-sm">
+                <h2 className="mb-4 text-3xl font-semibold text-gray-800">
+                  Enter OTP
+                </h2>
+                <form>
+                  <label
+                    htmlFor="enter"
+                    className="font-medium text-gray-600"
+                  >
+                    Enter OTP
+                  </label>
+                  <input
+                    type="text"
+                    name="enter"
+                    placeholder="Enter OTP"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    className="w-full px-4 py-2 mt-1 mb-6 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
+                  />
+                  <button
+                    onClick={handleVerifyOtp}
+                    className="w-full py-2 font-medium text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary"
+                  >
+                    Verify OTP
+                  </button>
+                </form>
+              </div>
+            </>
+          ) : (
+            // New Password Form
+            <>
+              <div className="w-full max-w-sm">
+                <h2 className="mb-4 text-3xl font-semibold text-gray-800">
+                  Set New Password
+                </h2>
+                <form>
+                  <div className="mb-6">
+                    <label
+                      htmlFor="newpassword"
+                      className="font-medium text-gray-600"
+                    >
+                      New Password
+                    </label>
+                    <input
+                      type="password"
+                      name="newpassword"
+                      placeholder="**********"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      required
+                      minLength={8}
+                      maxLength={14}
+                      className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
+                    />
+                  </div>
+                  <div className="mb-8">
+                    <label
+                      htmlFor="confnewpassword"
+                      className="font-medium text-gray-600"
+                    >
+                      Confirm New Password
+                    </label>
+                    <input
+                      type="password"
+                      name="confnewpassword"
+                      placeholder="**********"
+                      value={confirmNewPassword}
+                      onChange={(e) =>
+                        setConfirmNewPassword(e.target.value)
+                      }
+                      required
+                      minLength={8}
+                      maxLength={14}
+                      className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
+                    />
+                  </div>
 
-                      <button
-                        onClick={handleResetPassword}
-                        className="w-full py-2 font-medium text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary"
-                      >
-                        Reset Password
-                      </button>
-                    </form>
-                  </>
-                )}
-
-                <p className="text-red-500">{message}</p>
+                  <button
+                    onClick={handleResetPassword}
+                    className="w-full py-3 font-medium text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary shadow-md hover:shadow-lg"
+                  >
+                    Reset Password
+                  </button>
+                </form>
               </div>
             </>
           )}
@@ -345,10 +369,14 @@ function SignIn() {
             <div className="flex-1 border-t border-gray-300"></div>
             <p className="px-3 text-gray-500">
               <span
-                onClick={() => setForgotPassword(!forgotPassword)}
+                onClick={() => {
+                  if (formState !== "newpassword") {
+                    setFormState(formState === "signin" ? "forgot" : "signin");
+                  }
+                }}
                 className="font-semibold cursor-pointer"
               >
-                {forgotPassword ? "Back to Login" : "Forgot your Password?"}
+                {formState === "signin" ? "Forgot your Password?" : "Back to Login"}
               </span>
             </p>
             <div className="flex-1 border-t border-gray-300"></div>
@@ -367,6 +395,10 @@ function SignIn() {
             </p>
             <div className="flex-1 border-t border-gray-300"></div>
           </div>
+
+
+          <p className="text-red-500">{message}</p>
+
         </div>
       </div>
     </>
