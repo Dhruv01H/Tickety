@@ -11,6 +11,8 @@ import FaqAccordian from "./FaqAccordian/FaqAccordian";
 import AboutStat from "./AboutStat/AboutStat";
 import SeatPopup from "./SeatPopup/SeatPopup";
 import SeatSelection from "./SeatSelection/SeatSelection";
+import CastAndStory from "./CastAndStory/CastAndStory";
+import MovieSwiper from "./MovieSwiper/MovieSwiper";
 
 export { 
     Navbar,
@@ -26,4 +28,6 @@ export {
     AboutStat,
     SeatPopup,
     SeatSelection,
+    CastAndStory,
+    MovieSwiper,
 }

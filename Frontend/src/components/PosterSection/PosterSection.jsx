@@ -1,7 +1,11 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { assets } from "../../assets/assets";
 
 function PosterSection() {
+
+  const navigate = useNavigate()
+
   return (
     <>
       <section className="bg-[url('./poster_banner.jpg')] min-h-[90vh] bg-no-repeat bg-cover my-20 px-5 md:px-10 lg:px-20 xl:px-36 2xl:px-56 flex items-center">
@@ -32,7 +36,7 @@ function PosterSection() {
               className="w-20 md:w-24 lg:w-28 xl:w-32"
             />
           </div>
-          <button className="px-5 py-2.5 transition text-lg rounded-lg duration-500 bg-frost hover:bg-primary hover:text-frost hover:scale-105">
+          <button onClick={() => navigate("/charlie")} className="px-5 cursor-pointer py-2.5 transition text-lg rounded-lg duration-500 bg-frost hover:bg-primary hover:text-frost hover:scale-105">
             More Info
           </button>
         </div>

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState, useContext } from "react";
+import { useState, useContext } from "react";
 import axios from "axios";
 import { AppContext } from "../../context/AppContext";
 import { assets } from "../../assets/assets";
@@ -23,17 +23,24 @@ function SignIn() {
     const obj = Object.fromEntries(formData.entries());
 
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/signin", obj, {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/signin",
+        obj,
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
 
       if (response.data) {
         setMessage("Successful Login!");
         try {
-          const sessionResponse = await axios.get("http://localhost:8080/api/auth/session", {
-            withCredentials: true,
-          });
+          const sessionResponse = await axios.get(
+            "http://localhost:8080/api/auth/session",
+            {
+              withCredentials: true,
+            }
+          );
 
           if (sessionResponse.status === 200) {
             setUser(sessionResponse.data);
@@ -64,13 +71,19 @@ function SignIn() {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/sendOtp", { email });
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/sendOtp",
+        { email }
+      );
       if (response.status === 200) {
         setFormState("otp");
         setMessage("OTP sent to your email.");
       }
     } catch (error) {
-      console.error("Error sending OTP:", error.response?.data || error.message);
+      console.error(
+        "Error sending OTP:",
+        error.response?.data || error.message
+      );
       setMessage("Failed to send OTP. Try again.");
     }
 
@@ -82,6 +95,7 @@ function SignIn() {
     e.preventDefault();
     console.log("Verifying OTP...");
     try {
+
         const response = await axios.post("http://localhost:8080/api/auth/verifyOtp", {
             email: email,
             otp: otp
@@ -99,6 +113,7 @@ function SignIn() {
     } catch (error) {
         console.error("Error verifying OTP:", error);
         setMessage(error.response?.data?.message || "Error verifying OTP");
+
     }
   };
 
@@ -111,10 +126,13 @@ function SignIn() {
 
     try {
       console.log("Resetting password for:", email);
-      const response = await axios.post("http://localhost:8080/api/auth/forget-password", {
-        email,
-        password: newPassword,
-      });
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/forget-password",
+        {
+          email,
+          password: newPassword,
+        }
+      );
 
       if (response.status === 200) {
         setMessage("Password Reset Successful! Please login.");
@@ -128,9 +146,11 @@ function SignIn() {
         }, 1000); // Give user time to see the success message
       }
     } catch (error) {
+
       console.error("Password Reset Error:", error.response?.data || error.message);
       setMessage(error.response?.data?.message || "Failed to reset password. Try again.");
       // Don't change form state on error
+
     }
   };
 
@@ -143,8 +163,10 @@ function SignIn() {
         ></div>
 
         <div className="flex flex-col items-center justify-center w-full px-8 md:w-1/2 md:px-12">
+
           {formState === "signin" ? (
             // Sign In Form
+
             <>
               <h2 className="mb-2 text-3xl font-semibold text-gray-800">
                 Sign In to Tickety
@@ -192,8 +214,10 @@ function SignIn() {
                 </button>
               </form>
             </>
+
           ) : formState === "forgot" ? (
             // Forgot Password Email Form
+
             <>
               <div className="w-full max-w-sm">
                 <h2 className="mb-4 text-3xl font-semibold text-gray-800">
@@ -372,7 +396,9 @@ function SignIn() {
             <div className="flex-1 border-t border-gray-300"></div>
           </div>
 
+
           <p className="text-red-500">{message}</p>
+
         </div>
       </div>
     </>
