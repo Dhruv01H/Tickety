@@ -44,6 +44,9 @@ public class Person implements Serializable {
     @Column
     private String district;
 
+    @Column
+    private String walletAddress;
+
     // ================= GETTERS AND SETTERS ================= //
 
     public int getId() {
@@ -140,5 +143,13 @@ public class Person implements Serializable {
 
     public void setDistrict(String district) {
         this.district = district;
+    }
+
+    public String getWalletAddress() {
+        return walletAddress;
+    }
+
+    public void setWalletAddress(String walletAddress) {
+        this.walletAddress = walletAddress;
     }
 }
