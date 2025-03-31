@@ -58,7 +58,7 @@ public class NFTMintingService {
         );
 
         // Call mint function
-        String txHash = contract.mintNFT(userWalletAddress, metadataURI).send().getTransactionHash();
+        String txHash = contract.mintTicket(userWalletAddress, metadataURI).send().getTransactionHash();
         return "Minting Successful! Tx Hash: " + txHash;
     }
     

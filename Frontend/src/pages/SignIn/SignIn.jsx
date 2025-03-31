@@ -76,6 +76,7 @@ function SignIn() {
       const response = await axios.post("http://localhost:8080/api/auth/signin", obj, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
+        credentials: 'include'
       });
 
       if (response.data) {

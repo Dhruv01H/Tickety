@@ -1,5 +1,6 @@
 package com.example.tickety.controller;
 
+import java.math.BigInteger;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -74,15 +75,26 @@ public class PersonController {
     @PutMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody Person person) {
         try {
+            if (personRepository.findByEmail(person.getEmail()).isPresent()) {
+                return ResponseEntity.ok("Email Already Exists");
+            }
+            
+            // Encode password before saving
             person.setPassword(passwordEncoder.encode(person.getPassword()));
+            
+            // Generate and set verification token
             String token = emailService.sendVerificationEmail(person.getEmail());
             person.setVerificationtoken(token);
+            
+            // Save the person
             personRepository.save(person);
+            
             return ResponseEntity.ok("User Registration Successful");
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email Already Exists");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong. Try again.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Registration failed: " + e.getMessage());
         }
     }
 
