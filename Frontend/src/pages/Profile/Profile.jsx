@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { statesAndDistricts } from "./data";
 import { assets } from "../../assets/assets";
+import { ProfileCards } from "../../components/component_index";
 import { AppContext } from "../../context/AppContext";
 import axios from "axios";
 
@@ -14,18 +15,26 @@ function Profile() {
   const [username, setUsername] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
   const [phone, setPhone] = useState(user?.phone || "Enter Your Phone Number.");
-  const [dob, setDOB] = useState(user?.dob || "2001-01-01");  // Use valid date format YYYY-MM-DD
-  const [address, setAddress] = useState(user?.address || "Enter Your Address.");
-  const [selectedDistrict, setSelectedDistrict] = useState(user?.district || "");
+  const [dob, setDOB] = useState(user?.dob || "2001-01-01"); // Use valid date format YYYY-MM-DD
+  const [address, setAddress] = useState(
+    user?.address || "Enter Your Address."
+  );
+  const [selectedDistrict, setSelectedDistrict] = useState(
+    user?.district || ""
+  );
   const [selectedState, setSelectedState] = useState(user?.state || "");
   const [gender, setGender] = useState(user?.gender || "Male");
 
+  const [showPasswordModal, setShowPasswordModal] = useState(false); // Controls visibility of the popup
+  const [oldPassword, setOldPassword] = useState(""); // Stores the old password input
+  const [newPassword, setNewPassword] = useState(""); // Stores the new password input
+  const [confirmNewPassword, setConfirmNewPassword] = useState(""); // Stores the confirm password input
 
   /* State Management handlers to handle the edit mode of the profile */
   const [isEditing, setIsEditing] = useState(false);
   const handleEdit = () => {
     setIsEditing(true);
-  }
+  };
   const handleSave = async () => {
     setIsEditing(false);
     try {
@@ -41,9 +50,13 @@ function Profile() {
         gender: gender,
       };
 
-      const response = await axios.put("http://localhost:8080/api/auth/updatedata", updatedUser, {
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await axios.put(
+        "http://localhost:8080/api/auth/updatedata",
+        updatedUser,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       if (response.data === "Update Successful") {
         alert("Profile updated successfully!");
@@ -57,13 +70,29 @@ function Profile() {
     }
   };
 
+  const handleChangePassword = () => {
+    setShowPasswordModal(true); // Show the password change modal
+  };
+
+  const handleSubmitPasswordChange = () => {
+    setShowPasswordModal(false); // Hide the password change modal
+    //  if (newPassword !== confirmNewPassword) {
+    //  alert("New passwords do not match!");
+    ///  return;
+    // }
+
+    // Implement password change API logic here (Placeholder)
+    // alert("Password changed successfully!");
+    // setShowPasswordModal(false); // Close modal after success
+  };
+
   return (
     <>
-      <div className="px-10 py-6 mt-48 mb-32 sm:px-14 md:px-20 lg:px-28 xl:px-32 2xl:px-40">
+      <div className="px-10 py-6 mt-48 mb-4 sm:px-14 md:px-20 lg:px-28 xl:px-32 2xl:px-40">
         <div className="flex flex-col justify-between gap-5 sm:items-center sm:flex-row">
           <h1 className="text-2xl md:text-4xl">
             Hey there! {user.name}
-            <span className="text-3xl text-primary md:text-5xl">{ }</span>
+            <span className="text-3xl text-primary md:text-5xl">{}</span>
           </h1>
 
           {!isEditing ? (
@@ -108,7 +137,10 @@ function Profile() {
               />
             </div>
 
-            <button className="px-2 py-2 transition-all duration-500 border border-gray-400 rounded-md hover:bg-primary hover:text-frost">
+            <button
+              onClick={handleChangePassword}
+              className="px-2 py-2 transition-all duration-500 border border-gray-400 rounded-md cursor-pointer hover:bg-primary hover:text-frost"
+            >
               Change Password
             </button>
           </div>
@@ -203,7 +235,6 @@ function Profile() {
                   <option value="Female">Female</option>
                   <option value="Other">Other</option>
                 </select>
-
               </div>
             </div>
 
@@ -265,7 +296,57 @@ function Profile() {
             </div>
           </form>
         </div>
+        <div className="mt-10 border-t border-gray-300"></div>
       </div>
+      
+
+
+      {showPasswordModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="p-8 bg-white rounded-lg shadow-lg w-96">
+            <h2 className="mb-6 text-2xl font-bold">Change Password</h2>
+            <form onSubmit={handleChangePassword}>
+              <input
+                required
+                minLength={8}
+                maxLength={14}
+                type="password"
+                placeholder="Old Password"
+                className="w-full px-3 py-2 mb-4 border rounded-md outline-none focus:border-primary"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+              />
+              <input
+                required
+                minLength={8}
+                maxLength={14}
+                type="password"
+                placeholder="New Password"
+                className="w-full px-3 py-2 mb-4 border rounded-md outline-none focus:border-primary"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              <input
+                required
+                minLength={8}
+                maxLength={14}
+                type="password"
+                placeholder="Confirm New Password"
+                className="w-full px-3 py-2 mb-8 border rounded-md outline-none focus:border-primary"
+                value={confirmNewPassword}
+                onChange={(e) => setConfirmNewPassword(e.target.value)}
+              />
+              <button
+                className="w-full py-2 text-white transition duration-300 rounded-md cursor-pointer bg-primary hover:bg-secondary"
+              >
+                Submit
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <ProfileCards />
     </>
   );
 }
