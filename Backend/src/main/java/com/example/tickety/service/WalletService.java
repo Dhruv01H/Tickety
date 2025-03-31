@@ -25,6 +25,23 @@ public class WalletService {
         // Load the credentials from the generated wallet file
         Credentials credentials = WalletUtils.loadCredentials(password, WALLET_PATH + fileName);
 
-        return credentials.getAddress(); // Return the generated wallet address
+        // Store the private key in the database
+        return credentials.getAddress() + ":" + credentials.getEcKeyPair().getPrivateKey().toString(16);
+    }
+
+    public String getPrivateKey(String walletAddress) throws Exception {
+        // Find the wallet file for this address
+        File walletDir = new File(WALLET_PATH);
+        File[] files = walletDir.listFiles((dir, name) -> name.startsWith("UTC--"));
+        
+        if (files != null) {
+            for (File file : files) {
+                Credentials credentials = WalletUtils.loadCredentials("", file);
+                if (credentials.getAddress().equalsIgnoreCase(walletAddress)) {
+                    return credentials.getEcKeyPair().getPrivateKey().toString(16);
+                }
+            }
+        }
+        throw new Exception("Wallet not found for address: " + walletAddress);
     }
 }

@@ -89,7 +89,7 @@ public class PersonController {
             
             // Generate and set verification token
             String token = emailService.sendVerificationEmail(person.getEmail());
-            person.setVerificationtoken(token);
+            // person.setVerificationtoken(token);
             
             // Save the person
             personRepository.save(person);
@@ -119,7 +119,7 @@ public class PersonController {
 
         Person verifiedUser = person.get();
         verifiedUser.setIs_verified(true);
-        verifiedUser.setVerificationtoken(null); // ✅ Clear token after verification
+        // verifiedUser.setVerificationtoken(null); // ✅ Clear token after verification
         personRepository.save(verifiedUser);
 
         return ResponseEntity.ok("✅ Email verified! You can now log in.");
