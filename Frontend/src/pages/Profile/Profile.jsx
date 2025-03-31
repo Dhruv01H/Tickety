@@ -1,13 +1,17 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { statesAndDistricts } from "./data";
 import { assets } from "../../assets/assets";
 import { ProfileCards } from "../../components/component_index";
 import { AppContext } from "../../context/AppContext";
+import ProfileLoading from "../../components/LoadingAnimation/ProfileLoading";
+import { toast } from "react-toastify";
 import axios from "axios";
 
 function Profile() {
-  /* State Management handlers for the dropdown list of states and districts */
   const { user, setUser } = useContext(AppContext);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  /* State Management handlers for the dropdown list of states and districts */
   console.log(user.name);
 
   /* State Management handlers to handle dynamic values of input fields and store them */
@@ -59,14 +63,27 @@ function Profile() {
       );
 
       if (response.data === "Update Successful") {
-        alert("Profile updated successfully!");
-        setUser(updatedUser); // ✅ Update UI with new data
+        toast.success("Profile updated successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        setUser(updatedUser);
       } else {
-        alert("Failed to update profile.");
+        toast.error("Failed to update profile.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("Something went wrong.");
+      toast.error("Something went wrong while updating profile.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
 
@@ -74,17 +91,58 @@ function Profile() {
     setShowPasswordModal(true); // Show the password change modal
   };
 
-  const handleSubmitPasswordChange = () => {
-    setShowPasswordModal(false); // Hide the password change modal
-    //  if (newPassword !== confirmNewPassword) {
-    //  alert("New passwords do not match!");
-    ///  return;
-    // }
+  const handleSubmitPasswordChange = async (e) => {
+    e.preventDefault();
+    
+    if (newPassword !== confirmNewPassword) {
+      toast.error("New passwords do not match!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
 
-    // Implement password change API logic here (Placeholder)
-    // alert("Password changed successfully!");
-    // setShowPasswordModal(false); // Close modal after success
+    try {
+      const response = await axios.post("http://localhost:8080/api/auth/changePassword", {
+        email: user.email,
+        oldPassword: oldPassword,
+        newPassword: newPassword
+      }, {
+        withCredentials: true
+      });
+
+      if (response.status === 200) {
+        toast.success("Password changed successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        setShowPasswordModal(false);
+        // Clear the form
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
+      }
+    } catch (error) {
+      console.error("Error changing password:", error);
+      toast.error(error.response?.data || "Failed to change password.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
   };
+
+  useEffect(() => {
+    // Simulate loading time and data fetching
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <ProfileLoading />;
+  }
 
   return (
     <>
@@ -125,18 +183,6 @@ function Profile() {
               className="mb-6 rounded-lg w-72 h-72 lg:w-80 lg:h-80"
             />
 
-            <div className="flex flex-col gap-1 mb-8">
-              <label htmlFor="Password">Old Password</label>
-              <input
-                type="password"
-                name="Password"
-                defaultValue={"123456789"}
-                readOnly={true}
-                placeholder="Pasword"
-                className="w-full px-3 py-1.5 border border-gray-400 rounded-md"
-              />
-            </div>
-
             <button
               onClick={handleChangePassword}
               className="px-2 py-2 transition-all duration-500 border border-gray-400 rounded-md cursor-pointer hover:bg-primary hover:text-frost"
@@ -157,9 +203,9 @@ function Profile() {
                   name="Fullname"
                   value={fullname}
                   onChange={(e) => setFullname(e.target.value)}
-                  readOnly={!isEditing}
+                  disabled={!isEditing}
                   placeholder="Fullname"
-                  className="w-full px-3 py-1.5 border border-gray-400 rounded-md"
+                  className={`w-full px-3 py-1.5 border border-gray-400 rounded-md ${!isEditing ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 />
               </div>
 
@@ -170,9 +216,9 @@ function Profile() {
                   name="Username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  readOnly={!isEditing}
+                  disabled={!isEditing}
                   placeholder="Username"
-                  className="w-full px-3 py-1.5 border border-gray-400 rounded-md"
+                  className={`w-full px-3 py-1.5 border border-gray-400 rounded-md ${!isEditing ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 />
               </div>
             </div>
@@ -185,9 +231,9 @@ function Profile() {
                   name="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  readOnly={!isEditing}
+                  disabled={true}
                   placeholder="Email"
-                  className="w-full px-3 py-1.5 border border-gray-400 rounded-md"
+                  className="w-full px-3 py-1.5 border border-gray-400 rounded-md bg-gray-100 cursor-not-allowed"
                 />
               </div>
 
@@ -200,9 +246,9 @@ function Profile() {
                   minLength={10}
                   maxLength={10}
                   onChange={(e) => setPhone(e.target.value)}
-                  readOnly={!isEditing}
-                  placeholder="Username"
-                  className="w-full px-3 py-1.5 border border-gray-400 rounded-md"
+                  disabled={!isEditing}
+                  placeholder="Phone Number"
+                  className={`w-full px-3 py-1.5 border border-gray-400 rounded-md ${!isEditing ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 />
               </div>
             </div>
@@ -215,9 +261,9 @@ function Profile() {
                   name="DOB"
                   value={dob}
                   onChange={(e) => setDOB(e.target.value)}
-                  readOnly={!isEditing}
+                  disabled={!isEditing}
                   placeholder="Date of Birth"
-                  className="w-full px-3 py-1.5 border border-gray-400 rounded-md"
+                  className={`w-full px-3 py-1.5 border border-gray-400 rounded-md ${!isEditing ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 />
               </div>
 
@@ -226,10 +272,10 @@ function Profile() {
                 <select
                   name="Gender"
                   id="Gender"
-                  value={gender} // ✅ Bind the state to the select value
-                  onChange={(e) => setGender(e.target.value)} // ✅ Update state on change
-                  disabled={!isEditing} // ✅ Only allow editing when in edit mode
-                  className="w-full px-3 py-1.5 border border-gray-400 rounded-md"
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  disabled={!isEditing}
+                  className={`w-full px-3 py-1.5 border border-gray-400 rounded-md ${!isEditing ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 >
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
@@ -243,12 +289,13 @@ function Profile() {
                 <label htmlFor="State">State</label>
                 <select
                   name="State"
-                  className="w-full px-3 border rounded-md py-1.5 border-gray-400"
                   value={selectedState}
                   onChange={(e) => {
                     setSelectedState(e.target.value);
                     setSelectedDistrict("");
                   }}
+                  disabled={!isEditing}
+                  className={`w-full px-3 py-1.5 border border-gray-400 rounded-md ${!isEditing ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 >
                   <option value="" disabled>
                     Select a state
@@ -265,10 +312,10 @@ function Profile() {
                 <label htmlFor="District">District</label>
                 <select
                   name="District"
-                  className="w-full px-3 border rounded-md py-1.5 border-gray-400"
                   value={selectedDistrict}
                   onChange={(e) => setSelectedDistrict(e.target.value)}
-                  disabled={!selectedState}
+                  disabled={!isEditing || !selectedState}
+                  className={`w-full px-3 py-1.5 border border-gray-400 rounded-md ${!isEditing || !selectedState ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 >
                   <option value="" disabled>
                     Select a district
@@ -290,8 +337,8 @@ function Profile() {
                 id="Address"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                readOnly={!isEditing}
-                className="w-full px-3 py-1.5 border border-gray-400 rounded-md"
+                disabled={!isEditing}
+                className={`w-full px-3 py-1.5 border border-gray-400 rounded-md ${!isEditing ? 'bg-gray-100 cursor-not-allowed' : ''}`}
               ></textarea>
             </div>
           </form>
@@ -303,9 +350,17 @@ function Profile() {
 
       {showPasswordModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="p-8 bg-white rounded-lg shadow-lg w-96">
+          <div className="p-8 bg-white rounded-lg shadow-lg w-96 relative">
+            <button 
+              onClick={() => setShowPasswordModal(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
             <h2 className="mb-6 text-2xl font-bold">Change Password</h2>
-            <form onSubmit={handleChangePassword}>
+            <form onSubmit={handleSubmitPasswordChange}>
               <input
                 required
                 minLength={8}

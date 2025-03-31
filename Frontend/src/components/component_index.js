@@ -15,6 +15,8 @@ import CastAndStory from "./CastAndStory/CastAndStory";
 import MovieSwiper from "./MovieSwiper/MovieSwiper";
 import NowStreaming from "./NowStreaming/NowStreaming";
 import ProfileCards from "./ProfileCards/ProfileCards";
+import LoadingAnimation from "./LoadingAnimation/LoadingAnimation";
+import ProfileLoading from "./LoadingAnimation/ProfileLoading";
 
 export { 
     Navbar,
@@ -34,4 +36,6 @@ export {
     MovieSwiper,
     NowStreaming,
     ProfileCards,
+    LoadingAnimation,
+    ProfileLoading,
 }

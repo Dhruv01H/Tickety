@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import { assets } from "../../assets/assets";
+import { toast } from "react-toastify";
 
 function SignUp() {
   const navigate = useNavigate();
@@ -17,7 +18,10 @@ function SignUp() {
     const obj = Object.fromEntries(formData.entries());
 
     if (obj.password !== obj.confirmpassword) {
-      alert("Password does not match");
+      toast.error("Passwords do not match!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       setLoading(false);
       return;
     }
@@ -34,18 +38,28 @@ function SignUp() {
       );
 
       if (response.data === "User Registration Successful") {
-        setShowPopup(true);
+        toast.success("Registration successful! Please check your email for verification.", {
+          position: "top-right",
+          autoClose: 5000,
+        });
         setTimeout(() => {
-          setShowPopup(false);
           navigate("/signin");
         }, 3000);
       } else if (response.data === "Email Already Exists") {
-        alert("Email Already Exists. Please Sign In.");
-        navigate("/signin");
+        toast.error("Email already exists. Please sign in.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        setTimeout(() => {
+          navigate("/signin");
+        }, 2000);
       }
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
-      setError("An error occurred. Please try again.");
+      toast.error("Registration failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     } finally {
       setLoading(false);
     }
@@ -67,7 +81,17 @@ function SignUp() {
       )}
 
       <div className="flex h-screen">
-        <div className="flex flex-col items-center justify-center w-full px-8 md:w-1/2 md:px-12">
+        <div className="flex flex-col items-center justify-center w-full px-8 md:w-1/2 md:px-12 relative">
+          {/* Close Button */}
+          <button
+            onClick={() => navigate('/')}
+            className="absolute top-8 right-8 text-gray-600 hover:text-gray-800 transition-colors duration-300"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
           <h2 className="mb-2 text-3xl font-semibold text-gray-800">
             Sign Up to Tickety
           </h2>

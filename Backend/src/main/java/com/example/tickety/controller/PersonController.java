@@ -44,27 +44,30 @@ public class PersonController {
 
     // ✅ Sign in 
     @PostMapping("/signin")
-    public ResponseEntity<String> signin(@RequestBody Person person, HttpSession session) {
+    public ResponseEntity<?> signin(@RequestBody Person person, HttpSession session) {
         Optional<Person> optionalPerson = personRepository.findByEmail(person.getEmail());
 
         if (optionalPerson.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Email or Password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("message", "User not found"));
         }
 
         Person p = optionalPerson.get();
 
         if (!p.getIs_verified()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("❌ Email not verified! Please verify your account.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("message", "Email not verified"));
         }
 
         String storedpassword = p.getPassword();
 
         if (!passwordEncoder.matches(person.getPassword(), storedpassword)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect Password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("message", "Invalid Password"));
         }
 
         session.setAttribute("user", p);
-        return ResponseEntity.ok("Login Successful");
+        return ResponseEntity.ok(Map.of("message", "Login Successful"));
     }
 
     // ✅ Sign up
@@ -211,6 +214,33 @@ public class PersonController {
         }
     }
 
+    @PostMapping("/changePassword")
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> request, HttpSession session) {
+        String oldPassword = request.get("oldPassword");
+        String newPassword = request.get("newPassword");
+        String email = request.get("email");
 
+        if (oldPassword == null || newPassword == null || email == null) {
+            return ResponseEntity.badRequest().body("Old password, new password and email are required!");
+        }
+
+        Optional<Person> optionalPerson = personRepository.findByEmail(email);
+        if (optionalPerson.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        Person person = optionalPerson.get();
+        
+        // Verify old password
+        if (!passwordEncoder.matches(oldPassword, person.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect old password");
+        }
+
+        // Update password
+        person.setPassword(passwordEncoder.encode(newPassword));
+        personRepository.save(person);
+
+        return ResponseEntity.ok("Password updated successfully");
+    }
 
 }

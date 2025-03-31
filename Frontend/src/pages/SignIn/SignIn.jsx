@@ -3,6 +3,7 @@ import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { AppContext } from "../../context/AppContext";
 import { assets } from "../../assets/assets";
+import { toast } from "react-toastify";
 
 function SignIn() {
   const navigate = useNavigate();
@@ -78,8 +79,10 @@ function SignIn() {
       });
 
       if (response.data) {
-        setShowNotification(true);
-        setMessage("Successful Login!");
+        toast.success("Login successful!", {
+          position: "top-right",
+          autoClose: 2000,
+        });
         try {
           const sessionResponse = await axios.get("http://localhost:8080/api/auth/session", {
             withCredentials: true,
@@ -91,25 +94,55 @@ function SignIn() {
               navigate("/");
             }, 1000);
           } else {
-            setMessage("Session issue. Try logging in again.");
+            toast.error("Session issue. Please try logging in again.", {
+              position: "top-right",
+              autoClose: 3000,
+            });
           }
         } catch (sessionError) {
           console.error("Session Fetch Error:", sessionError);
           setUser(null);
+          toast.error("Failed to fetch user session.", {
+            position: "top-right",
+            autoClose: 3000,
+          });
         }
-      } else {
-        setError("Invalid Credentials");
       }
     } catch (error) {
       console.error("Login Error:", error.response?.data || error.message);
-      setError("Something went wrong. Please try again.");
+      
+      // Handle specific error cases
+      if (error.response?.data?.message === "Invalid Password" || error.response?.data === "Invalid Password") {
+        toast.error("Incorrect password. Please try again.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      } else if (error.response?.data?.message === "User not found" || error.response?.data === "User not found") {
+        toast.error("Email not registered. Please sign up.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      } else if (error.response?.data?.message === "Email not verified" || error.response?.data === "Email not verified") {
+        toast.error("Please verify your email before logging in.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      } else {
+        toast.error(error.response?.data?.message || "Login failed. Please try again.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
     }
   };
 
   // Send OTP to Email
   const handleSendOtp = async () => {
     if (!email) {
-      setMessage("Please enter your email.");
+      toast.error("Please enter your email.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       return;
     }
 
@@ -119,11 +152,17 @@ function SignIn() {
       const response = await axios.post("http://localhost:8080/api/auth/sendOtp", { email });
       if (response.status === 200) {
         setFormState("otp");
-        setMessage("OTP sent to your email.");
+        toast.success("OTP sent to your email!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
       }
     } catch (error) {
       console.error("Error sending OTP:", error.response?.data || error.message);
-      setMessage("Failed to send OTP. Try again.");
+      toast.error("Failed to send OTP. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
 
     setLoading(false);
@@ -134,30 +173,39 @@ function SignIn() {
     e.preventDefault();
     console.log("Verifying OTP...");
     try {
-        const response = await axios.post("http://localhost:8080/api/auth/verifyOtp", {
-            email: email,
-            otp: otp
+      const response = await axios.post("http://localhost:8080/api/auth/verifyOtp", {
+        email: email,
+        otp: otp
+      });
+      
+      if (response.data.verified) {
+        toast.success("OTP verified successfully!", {
+          position: "top-right",
+          autoClose: 3000,
         });
-        console.log("OTP verification response:", response.data);
-        
-        if (response.data.verified) {
-            console.log("OTP verified successfully");
-            setMessage(response.data.message);
-            setFormState("newpassword");
-        } else {
-            console.log("OTP verification failed");
-            setMessage(response.data.message);
-        }
+        setFormState("newpassword");
+      } else {
+        toast.error("Invalid OTP. Please try again.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
     } catch (error) {
-        console.error("Error verifying OTP:", error);
-        setMessage(error.response?.data?.message || "Error verifying OTP");
+      console.error("Error verifying OTP:", error);
+      toast.error("Failed to verify OTP.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
 
   // Reset Password
   const handleResetPassword = async () => {
     if (newPassword !== confirmNewPassword) {
-      setMessage("Passwords do not match.");
+      toast.error("Passwords do not match.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       return;
     }
 
@@ -169,22 +217,24 @@ function SignIn() {
       });
 
       if (response.status === 200) {
-        setMessage("Password Reset Successful! Please login.");
-        // Only reset form state after successful password reset
+        toast.success("Password reset successful! Please login.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
         setTimeout(() => {
           setFormState("signin");
           setEmail("");
           setOtp("");
           setNewPassword("");
           setConfirmNewPassword("");
-        }, 1000); // Give user time to see the success message
+        }, 1000);
       }
     } catch (error) {
-
       console.error("Password Reset Error:", error.response?.data || error.message);
-      setMessage(error.response?.data?.message || "Failed to reset password. Try again.");
-      // Don't change form state on error
-
+      toast.error("Failed to reset password. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
 
@@ -198,7 +248,16 @@ function SignIn() {
           style={{ backgroundImage: `url(${assets.abstractBg})` }}
         ></div>
 
-        <div className="flex flex-col items-center justify-center w-full px-8 md:w-1/2 md:px-12">
+        <div className="flex flex-col items-center justify-center w-full px-8 md:w-1/2 md:px-12 relative">
+          {/* Close Button */}
+          <button
+            onClick={() => navigate('/')}
+            className="absolute top-8 right-8 text-gray-600 hover:text-gray-800 transition-colors duration-300"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
 
           {formState === "signin" ? (
             // Sign In Form
