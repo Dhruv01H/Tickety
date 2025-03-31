@@ -14,6 +14,7 @@ import SeatSelection from "./SeatSelection/SeatSelection";
 import CastAndStory from "./CastAndStory/CastAndStory";
 import MovieSwiper from "./MovieSwiper/MovieSwiper";
 import NowStreaming from "./NowStreaming/NowStreaming";
+import ProfileCards from "./ProfileCards/ProfileCards";
 
 export { 
     Navbar,
@@ -32,4 +33,5 @@ export {
     CastAndStory,
     MovieSwiper,
     NowStreaming,
+    ProfileCards,
 }
