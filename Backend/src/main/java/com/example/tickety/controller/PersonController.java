@@ -1,9 +1,12 @@
 package com.example.tickety.controller;
 
+import java.math.BigInteger;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,6 +19,7 @@ import com.example.tickety.bean.Person;
 import com.example.tickety.service.EmailService;
 import com.example.tickety.service.NFTMintingService;
 import com.example.tickety.service.OtpService;
+import com.example.tickety.service.WalletService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -39,6 +43,8 @@ public class PersonController {
     @Autowired
     private NFTMintingService nftMintingService;
 
+    @Autowired
+    private WalletService walletService;
 
     private final Map<String, String> otpStorage = new ConcurrentHashMap<>();
 
@@ -74,15 +80,31 @@ public class PersonController {
     @PutMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody Person person) {
         try {
+            if (personRepository.findByEmail(person.getEmail()).isPresent()) {
+                return ResponseEntity.ok("Email Already Exists");
+            }
+            
+            // Encode password before saving
             person.setPassword(passwordEncoder.encode(person.getPassword()));
+            
+            // Generate and set verification token
             String token = emailService.sendVerificationEmail(person.getEmail());
-            person.setVerificationtoken(token);
+            // person.setVerificationtoken(token);
+            
+            // Save the person
             personRepository.save(person);
+            
+            // Create wallet for the new user
+            String walletAddress = walletService.createWallet(person.getPassword());
+            person.setWalletAddress(walletAddress);
+            personRepository.save(person);
+            
             return ResponseEntity.ok("User Registration Successful");
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email Already Exists");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong. Try again.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Registration failed: " + e.getMessage());
         }
     }
 
@@ -97,7 +119,7 @@ public class PersonController {
 
         Person verifiedUser = person.get();
         verifiedUser.setIs_verified(true);
-        verifiedUser.setVerificationtoken(null); // ✅ Clear token after verification
+        // verifiedUser.setVerificationtoken(null); // ✅ Clear token after verification
         personRepository.save(verifiedUser);
 
         return ResponseEntity.ok("✅ Email verified! You can now log in.");
@@ -241,6 +263,97 @@ public class PersonController {
         personRepository.save(person);
 
         return ResponseEntity.ok("Password updated successfully");
+    }
+
+    @PostMapping("/batch-mint")
+    public ResponseEntity<?> batchMintNFTs(@RequestBody Map<String, Object> request) {
+        String toAddress = (String) request.get("toAddress");
+        @SuppressWarnings("unchecked")
+        List<String> metadataURIs = (List<String>) request.get("metadataURIs");
+        
+        if (toAddress == null || metadataURIs == null || metadataURIs.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "toAddress and metadataURIs are required"));
+        }
+        
+        try {
+            String result = nftMintingService.batchMintNFTs(toAddress, metadataURIs);
+            return ResponseEntity.ok(Map.of("message", result));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Batch minting failed: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/seats/{walletAddress}")
+    public ResponseEntity<?> getSeatNumbers(@PathVariable String walletAddress) {
+        try {
+            List<String> seatNumbers = nftMintingService.getSeatNumbersForAddress(walletAddress);
+            return ResponseEntity.ok(Map.of(
+                "walletAddress", walletAddress,
+                "seatNumbers", seatNumbers,
+                "totalSeats", seatNumbers.size()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Failed to get seat numbers: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/taken-seats")
+    public ResponseEntity<?> getTakenSeats() {
+        try {
+            List<String> takenSeats = nftMintingService.getAllTakenSeats();
+            return ResponseEntity.ok(Map.of(
+                "takenSeats", takenSeats,
+                "totalTakenSeats", takenSeats.size()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Failed to get taken seats: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/mint-selected-seats")
+    public ResponseEntity<?> mintSelectedSeats(@RequestBody Map<String, Object> request, HttpSession session) {
+        try {
+            // Get user from session
+            Person user = (Person) session.getAttribute("user");
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "User not logged in"));
+            }
+
+            // Get user's wallet address
+            String walletAddress = user.getWalletAddress();
+            if (walletAddress == null || walletAddress.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "User wallet address not found"));
+            }
+
+            // Get selected seats from request
+            @SuppressWarnings("unchecked")
+            List<String> selectedSeats = (List<String>) request.get("selectedSeats");
+            if (selectedSeats == null || selectedSeats.isEmpty()) {
+                return ResponseEntity.badRequest()
+                    .body(Map.of("error", "No seats selected"));
+            }
+
+            // Use seat numbers directly as metadata URIs
+            List<String> metadataURIs = new ArrayList<>(selectedSeats);
+
+            // Mint NFTs for selected seats
+            String result = nftMintingService.batchMintNFTs(walletAddress, metadataURIs);
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "Tickets minted successfully",
+                "details", result,
+                "walletAddress", walletAddress,
+                "selectedSeats", selectedSeats
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Failed to mint tickets: " + e.getMessage()));
+        }
     }
 
 }

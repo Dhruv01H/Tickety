@@ -107,7 +107,8 @@ function SignUp() {
                 name="name"
                 required
                 placeholder="Username"
-                className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
+                disabled={loading}
+                className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -122,8 +123,9 @@ function SignUp() {
                 type="email"
                 name="email"
                 placeholder="example@email.com"
-                className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
+                className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                 required
+                disabled={loading}
               />
             </div>
 
@@ -138,7 +140,8 @@ function SignUp() {
                 minLength={10}
                 maxLength={10}
                 placeholder="Phone"
-                className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
+                disabled={loading}
+                className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -150,10 +153,11 @@ function SignUp() {
                 type="password"
                 name="password"
                 placeholder="********"
-                className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
+                className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                 required
                 minLength={8}
                 maxLength={14}
+                disabled={loading}
               />
             </div>
 
@@ -168,17 +172,18 @@ function SignUp() {
                 minLength={8}
                 maxLength={14}
                 placeholder="Confirm Password"
-                className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
+                disabled={loading}
+                className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2 font-medium text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary"
+              className="w-full py-2 font-medium text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               {loading ? (
-                <span className="flex items-center">
+                <span className="flex items-center justify-center">
                   <svg
                     className="w-5 h-5 mr-2 text-white animate-spin"
                     viewBox="0 0 24 24"

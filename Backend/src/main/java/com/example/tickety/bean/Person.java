@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "person") // Explicitly naming the table
 public class Person implements Serializable {
+    private static final long serialVersionUID = 733783470190038252L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +27,7 @@ public class Person implements Serializable {
     @Column
     private boolean is_verified = false;
 
-    @Column
+    @Column(name = "verification_token")
     private String verificationToken;
 
     @Column
@@ -43,6 +44,12 @@ public class Person implements Serializable {
 
     @Column
     private String district;
+
+    @Column
+    private String walletAddress;
+
+    @Column
+    private String privateKey;
 
     // ================= GETTERS AND SETTERS ================= //
 
@@ -94,11 +101,11 @@ public class Person implements Serializable {
         this.is_verified = is_verified;
     }
 
-    public String getVerificationtoken() {
+    public String getVerificationToken() {
         return verificationToken;
     }
 
-    public void setVerificationtoken(String verificationToken) {
+    public void setVerificationToken(String verificationToken) {
         this.verificationToken = verificationToken;
     }
 
@@ -140,5 +147,21 @@ public class Person implements Serializable {
 
     public void setDistrict(String district) {
         this.district = district;
+    }
+
+    public String getWalletAddress() {
+        return walletAddress;
+    }
+
+    public void setWalletAddress(String walletAddress) {
+        this.walletAddress = walletAddress;
+    }
+
+    public String getPrivateKey() {
+        return privateKey;
+    }
+
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
     }
 }

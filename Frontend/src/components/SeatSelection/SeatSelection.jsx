@@ -1,5 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "../../context/AppContext";
+import axios from "axios";
 
 const seatLayout = [
   { category: "Rs. 179 Platinum", rows: ["N", "M"], seats: 20, price: 179 },
@@ -14,27 +15,58 @@ const seatLayout = [
 
 const SeatSelection = () => {
   const { selectedSeats } = useContext(AppContext);
-  const [bookedSeats, setBookedSeats] = useState(
-    new Set(["N1", "M5", "L10", "K15"])
-  ); // Example booked seats
+  const [bookedSeats, setBookedSeats] = useState(new Set()); // Initialize empty
   const [userSelectedSeats, setUserSelectedSeats] = useState(new Set());
-  const [showPopup, setShowPopup] = useState(false); // State to control the popup visibility
+  const [showPopup, setShowPopup] = useState(false);
   const [bookingDetails, setBookingDetails] = useState({
     seatCount: 0,
     seatNumbers: [],
     totalPrice: 0,
-  }); // State to hold booking details
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Fetch taken seats when component mounts
+  useEffect(() => {
+    const fetchTakenSeats = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/auth/taken-seats');
+        console.log('Received taken seats:', response.data.takenSeats);
+        if (response.data.takenSeats) {
+          // Use the seat numbers exactly as they come from the backend
+          setBookedSeats(new Set(response.data.takenSeats));
+          console.log('Updated booked seats:', response.data.takenSeats);
+        }
+      } catch (err) {
+        console.error('Error fetching taken seats:', err);
+        setError('Failed to load seat availability');
+      }
+    };
+
+    fetchTakenSeats();
+  }, []);
 
   // Function to check if a seat is booked
-  const isBooked = (row, seat) => bookedSeats.has(`${row}${seat}`);
+  const isBooked = (row, seat) => {
+    const seatKey = `${row}${seat}`;
+    const isBooked = bookedSeats.has(seatKey);
+    console.log('Checking seat:', {
+      row,
+      seat,
+      seatKey,
+      bookedSeatsArray: Array.from(bookedSeats),
+      isBooked
+    });
+    return isBooked;
+  };
 
   // Function to handle seat selection logic
   const handleSeatSelection = (row, seat) => {
     const seatKey = `${row}${seat}`;
-    if (isBooked(row, seat)) return; // Ignore selection for booked seats
+    if (isBooked(row, seat)) return;
 
     if (userSelectedSeats.has(seatKey)) {
-      setUserSelectedSeats(new Set()); // Reset selection
+      setUserSelectedSeats(new Set());
       return;
     }
 
@@ -72,27 +104,65 @@ const SeatSelection = () => {
     setUserSelectedSeats(selected);
   };
 
-  // Function to handle booking confirmation
-  const handleConfirmBooking = () => {
-    let seatNumbers = Array.from(userSelectedSeats);
-    let totalPrice = 0;
+  // Function to handle booking confirmation and NFT minting
+  const handleConfirmBooking = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-    seatNumbers.forEach((seat) => {
-      let row = seat.charAt(0);
-      let section = seatLayout.find((section) => section.rows.includes(row));
-      totalPrice += section ? section.price : 0;
-    });
+      let seatNumbers = Array.from(userSelectedSeats);
+      console.log('Selected seats to mint:', seatNumbers);
+      let totalPrice = 0;
 
-    setBookingDetails({
-      seatCount: seatNumbers.length,
-      seatNumbers,
-      totalPrice,
-    });
-    setShowPopup(true);
+      seatNumbers.forEach((seat) => {
+        let row = seat.charAt(0);
+        let section = seatLayout.find((section) => section.rows.includes(row));
+        totalPrice += section ? section.price : 0;
+      });
+
+      // Mint NFTs for selected seats
+      const response = await axios.post('http://localhost:8080/api/auth/mint-selected-seats', {
+        selectedSeats: seatNumbers
+      }, {
+        withCredentials: true // Important for sending cookies
+      });
+
+      if (response.data.message === "Tickets minted successfully") {
+        console.log('Tickets minted successfully, fetching updated seats');
+        // Fetch updated taken seats after successful minting
+        const takenSeatsResponse = await axios.get('http://localhost:8080/api/auth/taken-seats');
+        console.log('Received updated taken seats:', takenSeatsResponse.data.takenSeats);
+        if (takenSeatsResponse.data.takenSeats) {
+          // Use the seat numbers exactly as they come from the backend
+          setBookedSeats(new Set(takenSeatsResponse.data.takenSeats));
+          console.log('Updated booked seats state:', takenSeatsResponse.data.takenSeats);
+        }
+
+        setBookingDetails({
+          seatCount: seatNumbers.length,
+          seatNumbers,
+          totalPrice,
+        });
+        setShowPopup(true);
+      } else {
+        throw new Error('Failed to mint tickets');
+      }
+    } catch (err) {
+      console.error('Error minting tickets:', err);
+      setError(err.response?.data?.error || 'Failed to mint tickets. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="flex flex-col items-center justify-center p-4 mt-5">
+      {error && (
+        <div className="w-full max-w-4xl p-4 mb-4 text-red-700 bg-red-100 rounded-lg">
+          {error}
+        </div>
+      )}
+
       {seatLayout.map((section, index) => (
         <div key={index} className="w-full max-w-4xl my-4">
           <h2 className="mb-2 text-lg font-semibold text-primary">
@@ -136,10 +206,13 @@ const SeatSelection = () => {
       {userSelectedSeats.size > 0 ? (
         <div className="fixed bottom-0 left-0 flex justify-center w-full p-4 shadow-lg bg-white/60">
           <button
-            className="px-6 py-2 transition duration-300 rounded-lg shadow-md bg-primary text-frost hover:bg-secondary "
+            className={`px-6 py-2 transition duration-300 rounded-lg shadow-md bg-primary text-frost hover:bg-secondary ${
+              loading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
             onClick={handleConfirmBooking}
+            disabled={loading}
           >
-            Confirm Booking
+            {loading ? 'Minting Tickets...' : 'Confirm Booking'}
           </button>
         </div>
       ) : (
@@ -155,11 +228,12 @@ const SeatSelection = () => {
             <p className="mb-2">Seats Selected: {bookingDetails.seatCount}</p>
             <p className="mb-2">Seat Numbers: {bookingDetails.seatNumbers.join(", ")}</p>
             <p className="mb-2">Total Price: Rs. {bookingDetails.totalPrice}</p>
+            <p className="mb-2 text-green-600">NFT Tickets Minted Successfully!</p>
             <button
               className="px-4 py-2 mt-4 text-white transition duration-300 rounded cursor-pointer bg-primary hover:bg-secondary"
               onClick={() => setShowPopup(false)}
             >
-              Confirm Booking
+              Close
             </button>
           </div>
         </div>
