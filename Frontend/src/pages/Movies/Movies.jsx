@@ -1,6 +1,6 @@
 import React from "react";
 import { assets } from "../../assets/assets";
-import { NowStreaming } from "../../components/component_index";
+import { NowStreaming, Upcoming } from "../../components/component_index";
 
 function Movies() {
   return (
@@ -15,6 +15,7 @@ function Movies() {
       <div className="mb-20 border-t-[14px] border-black border-dashed" />
 
       <NowStreaming />
+      <Upcoming />
     </>
   );
 }

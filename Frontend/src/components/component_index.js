@@ -17,6 +17,7 @@ import NowStreaming from "./NowStreaming/NowStreaming";
 import ProfileCards from "./ProfileCards/ProfileCards";
 import LoadingAnimation from "./LoadingAnimation/LoadingAnimation";
 import ProfileLoading from "./LoadingAnimation/ProfileLoading";
+import Upcoming from "./Upcoming/Upcoming";
 
 export { 
     Navbar,
@@ -38,4 +39,5 @@ export {
     ProfileCards,
     LoadingAnimation,
     ProfileLoading,
+    Upcoming,
 }

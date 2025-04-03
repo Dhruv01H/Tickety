@@ -24,11 +24,11 @@ function ProfileCards() {
             >
               <h4 className="text-2xl font-medium">
                 {" "}
-                <i class="ri-film-line mr-4 text-primary"></i> {item.title}
+                <i className="mr-4 ri-film-line text-primary"></i> {item.title}
               </h4>
               <p>{item.description}</p>
               <p className="text-sm font-light">
-                <i class="ri-time-line mr-1 text-primary"></i> {item.runtime}
+                <i className="mr-1 ri-time-line text-primary"></i> {item.runtime}
               </p>
               <div className="mt-2 border-t border-gray-300"></div>
               <button onClick={() => openPopup(item)} className="py-2 transition duration-500 rounded-md cursor-pointer bg-gray-200/50 hover:text-frost hover:bg-primary">
