@@ -3,7 +3,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Routes, Route, useLocation } from "react-router-dom"
 import { Navbar, Footer } from "./components/component_index.js"
-import { Home, Profile, SignIn, SignUp, Contact, About, FAQ, BookTickets, Charlie, Movies } from "./pages/page_index.js"
+import { Home, Profile, SignIn, SignUp, Contact, About, FAQ, BookTickets, Charlie, Movies, Scanner } from "./pages/page_index.js"
 import AppContextProvider from "./context/AppContext.jsx";
 
 function App() {
@@ -27,6 +27,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="/faq" element={<FAQ />} />
+        <Route path="/scanner" element={<Scanner />} />
       </Routes>
       {!footerRoutes.includes(location.pathname) && <Footer />}
       </AppContextProvider>

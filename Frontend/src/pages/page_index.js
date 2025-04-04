@@ -8,6 +8,7 @@ import FAQ from "./FAQ/FAQ";
 import BookTickets from "./BookTickets/BookTickets";
 import Charlie from "./Charlie/Charlie";
 import Movies from "./Movies/Movies";
+import Scanner from "./Scanner/Scanner";
 
 export { 
     Home,
@@ -20,4 +21,5 @@ export {
     BookTickets,
     Charlie,
     Movies,
+    Scanner,
 }

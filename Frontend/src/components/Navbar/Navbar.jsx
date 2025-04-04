@@ -147,7 +147,12 @@ function Navbar() {
                 className="font-semibold transition-all duration-700 decoration-primary hover:text-primary hover:underline underline-offset-4"
               >
                 <li>Profile</li>
-                {/* <i className="text-xl rounded-[25%] border p-2.5 ri-user-3-fill"></i> */}
+              </Link>
+              <Link
+                to={"/scanner"}
+                className="font-semibold transition-all duration-700 decoration-primary hover:text-primary hover:underline underline-offset-4"
+              >
+                <li>Scanner</li>
               </Link>
               <Link
                 onClick={logout}
@@ -215,12 +220,26 @@ function Navbar() {
             <li>Join Now</li>
           </Link>
         ) : (
-          <Link
-            to={"/profile"}
-            className="transition-all duration-700 decoration-primary hover:text-primary hover:underline underline-offset-4"
-          >
-            <li>Profile</li>
-          </Link>
+          <>
+            <Link
+              to={"/profile"}
+              className="transition-all duration-700 decoration-primary hover:text-primary hover:underline underline-offset-4"
+            >
+              <li>Profile</li>
+            </Link>
+            <Link
+              to={"/scanner"}
+              className="transition-all duration-700 decoration-primary hover:text-primary hover:underline underline-offset-4"
+            >
+              <li>Scanner</li>
+            </Link>
+            <Link
+              onClick={logout}
+              className="transition-all duration-700 decoration-primary hover:text-primary hover:underline underline-offset-4"
+            >
+              <li>Logout</li>
+            </Link>
+          </>
         )}
       </menu>
     </>

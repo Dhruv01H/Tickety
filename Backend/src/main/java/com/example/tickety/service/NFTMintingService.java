@@ -16,12 +16,14 @@ import org.web3j.protocol.core.methods.response.Log;
 import java.util.List;
 import java.util.ArrayList;
 import java.lang.StringBuilder;
+import java.util.Map;
+import java.util.HashMap;
 
 @Service
 public class NFTMintingService {
     private static final String GANACHE_RPC_URL = "http://127.0.0.1:7545";
-    private static final String NFT_CONTRACT_ADDRESS = "0xd53beb2a77599fc1615d0facc262a85d7062b104"; // Replace with your contract address
-    private static final String OWNER_PRIVATE_KEY = "0x9752eca829d7dbd48c29b5d4adabbe326a88ca0f2fe7171e6facdc8090438cdc"; // Replace with the owner's private key
+    private static final String NFT_CONTRACT_ADDRESS = "0xad7cae6415b62029a9a5e4d260d7cc4fac55b771"; // Replace with your contract address
+    private static final String OWNER_PRIVATE_KEY = "0x0fe2e8d48a9ed2d4a2b1f98259e9f8deb2ffa96241b0c1b427185ab8152a302c"; // Replace with the owner's private key
 
     private final Web3j web3j = Web3j.build(new HttpService(GANACHE_RPC_URL));
     private final Credentials ownerCredentials = Credentials.create(OWNER_PRIVATE_KEY);
@@ -57,6 +59,8 @@ public class NFTMintingService {
             return gasPrice;
         }
     }
+
+    private Map<String, String> ticketStatuses = new HashMap<>();
 
     public String mintNFT(String userWalletAddress, String metadataURI) throws Exception {
         try {
@@ -325,5 +329,38 @@ public class NFTMintingService {
             e.printStackTrace();
             throw new Exception("Failed to get taken seats: " + e.getMessage());
         }
+    }
+
+    public String updateNFTMetadata(String ticketId, String status) throws Exception {
+        try {
+            // Load NFT contract with custom gas provider
+            NFTContract contract = NFTContract.load(
+                NFT_CONTRACT_ADDRESS, 
+                web3j, 
+                new RawTransactionManager(web3j, ownerCredentials), 
+                new CustomGasProvider()
+            );
+
+            // First, get all taken seats to verify the seat exists
+            List<String> takenSeats = getAllTakenSeats();
+            System.out.println("All taken seats: " + takenSeats);
+            System.out.println("Attempting to update seat: " + ticketId);
+
+            if (!takenSeats.contains(ticketId)) {
+                throw new Exception("Seat " + ticketId + " not found in taken seats");
+            }
+
+            // Store the status in memory
+            ticketStatuses.put(ticketId, status);
+            System.out.println("Updated status for ticket " + ticketId + " to " + status);
+            
+            return "Status updated successfully";
+        } catch (Exception e) {
+            throw new Exception("Failed to update NFT metadata: " + e.getMessage());
+        }
+    }
+
+    public String getTicketStatus(String ticketId) {
+        return ticketStatuses.getOrDefault(ticketId, "Unused");
     }
 }

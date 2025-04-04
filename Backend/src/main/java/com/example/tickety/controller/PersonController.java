@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.ArrayList;
+import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -89,7 +90,7 @@ public class PersonController {
             
             // Generate and set verification token
             String token = emailService.sendVerificationEmail(person.getEmail());
-            // person.setVerificationtoken(token);
+            person.setVerificationToken(token);
             
             // Save the person
             personRepository.save(person);
@@ -353,6 +354,130 @@ public class PersonController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", "Failed to mint tickets: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/update-ticket-status")
+    public ResponseEntity<?> updateTicketStatus(@RequestBody Map<String, String> request, HttpSession session) {
+        System.out.println("Received update-ticket-status request");
+        System.out.println("Request body: " + request);
+        
+        String ticketId = request.get("ticketId");
+        String status = request.get("status");
+
+        if (ticketId == null || status == null) {
+            System.out.println("Missing ticketId or status in request");
+            return ResponseEntity.badRequest().body(Map.of("error", "Ticket ID and status are required"));
+        }
+
+        try {
+            // Get all taken seats to verify if the ticket exists
+            List<String> takenSeats = nftMintingService.getAllTakenSeats();
+            System.out.println("Taken seats: " + takenSeats);
+            
+            // Check if the ticket exists in the taken seats
+            boolean ticketExists = takenSeats.stream()
+                .anyMatch(seat -> seat.equals(ticketId));
+            System.out.println("Ticket exists: " + ticketExists);
+
+            if (!ticketExists) {
+                System.out.println("Ticket not found: " + ticketId);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Ticket not found"));
+            }
+
+            // Get the owner's wallet address from the session
+            Person user = (Person) session.getAttribute("user");
+            System.out.println("User from session: " + (user != null ? user.getEmail() : "null"));
+            
+            if (user == null) {
+                System.out.println("No user found in session");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "User not logged in"));
+            }
+
+            String walletAddress = user.getWalletAddress();
+            System.out.println("User wallet address: " + walletAddress);
+            
+            if (walletAddress == null || walletAddress.isEmpty()) {
+                System.out.println("No wallet address found for user");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "User wallet address not found"));
+            }
+
+            // Update the NFT metadata
+            String result = nftMintingService.updateNFTMetadata(ticketId, status);
+            System.out.println("NFT metadata update result: " + result);
+
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Ticket status updated successfully",
+                "ticketId", ticketId,
+                "status", status,
+                "result", result
+            ));
+
+        } catch (Exception e) {
+            System.out.println("Error in updateTicketStatus: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Failed to update ticket status: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/ticket-status/{seatNumber}")
+    public ResponseEntity<?> getTicketStatus(@PathVariable String seatNumber) {
+        try {
+            // Get all taken seats
+            List<String> takenSeats = nftMintingService.getAllTakenSeats();
+            
+            // Check if this seat exists
+            if (!takenSeats.contains(seatNumber)) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Ticket not found"));
+            }
+
+            // Get the status
+            String status = nftMintingService.getTicketStatus(seatNumber);
+            
+            return ResponseEntity.ok(Map.of(
+                "status", status,
+                "seatNumber", seatNumber
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/transfer-ether")
+    public ResponseEntity<?> transferEther(@RequestBody Map<String, Object> request) {
+        String toAddress = (String) request.get("toAddress");
+        BigDecimal amount = new BigDecimal(request.get("amount").toString());
+        
+        if (toAddress == null || amount == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "toAddress and amount are required"));
+        }
+        
+        try {
+            String result = walletService.transferEther(toAddress, amount);
+            return ResponseEntity.ok(Map.of("message", result));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Transfer failed: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/wallet-balance/{address}")
+    public ResponseEntity<?> getWalletBalance(@PathVariable String address) {
+        try {
+            BigDecimal balance = walletService.getBalance(address);
+            return ResponseEntity.ok(Map.of(
+                "address", address,
+                "balance", balance,
+                "unit", "ETH"
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Failed to get balance: " + e.getMessage()));
         }
     }
 

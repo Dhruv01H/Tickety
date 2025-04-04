@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { QRCodeSVG } from "qrcode.react";
 
 function ProfileCards() {
   const [selectedMovie, setSelectedMovie] = useState(null);
@@ -13,10 +14,38 @@ function ProfileCards() {
   const [transferError, setTransferError] = useState(null);
   const [transferSuccess, setTransferSuccess] = useState(false);
 
+  const fetchTicketStatus = async (seat) => {
+    try {
+      console.log("Fetching status for seat:", seat);
+      const statusResponse = await axios.get(`http://localhost:8080/api/auth/ticket-status/${seat}`, {
+        withCredentials: true
+      });
+      console.log("Status response:", statusResponse.data);
+      return statusResponse.data.status;
+    } catch (err) {
+      console.error(`Error fetching status for seat ${seat}:`, err);
+      return 'Unused';
+    }
+  };
+
+  const refreshBookingStatuses = async () => {
+    console.log("Refreshing booking statuses...");
+    const updatedBookings = await Promise.all(bookings.map(async (booking) => {
+      const seatStatuses = await Promise.all(booking.ticketNumbers.map(fetchTicketStatus));
+      console.log("Seat statuses for booking", booking.id, ":", seatStatuses);
+      const isUsed = seatStatuses.some(status => status === 'Used');
+      return {
+        ...booking,
+        status: isUsed ? 'Used' : 'Unused'
+      };
+    }));
+    console.log("Updated bookings:", updatedBookings);
+    setBookings(updatedBookings);
+  };
+
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        // First get the user's session to get their wallet address
         const sessionResponse = await axios.get('http://localhost:8080/api/auth/session', {
           withCredentials: true
         });
@@ -28,26 +57,36 @@ function ProfileCards() {
         }
 
         const walletAddress = sessionResponse.data.walletAddress;
-        
-        // Then fetch the seats for this wallet address
         const seatsResponse = await axios.get(`http://localhost:8080/api/auth/seats/${walletAddress}`);
         
         if (seatsResponse.data && seatsResponse.data.seatNumbers) {
-          // Group seats that were booked together (assuming they're in sequence)
+          // Group seats based on their sequential order
           const seatGroups = [];
           let currentGroup = [];
-          let currentRow = null;
+          let previousSeat = null;
           
-          seatsResponse.data.seatNumbers.sort().forEach((seat) => {
-            const row = seat.charAt(0);
-            if (currentRow !== row) {
-              if (currentGroup.length > 0) {
-                seatGroups.push([...currentGroup]);
-              }
+          const sortedSeats = [...seatsResponse.data.seatNumbers].sort();
+          
+          sortedSeats.forEach((seat) => {
+            if (previousSeat === null) {
               currentGroup = [seat];
-              currentRow = row;
+              previousSeat = seat;
             } else {
-              currentGroup.push(seat);
+              const prevRow = previousSeat.charAt(0);
+              const prevNum = parseInt(previousSeat.slice(1));
+              const currentRow = seat.charAt(0);
+              const currentNum = parseInt(seat.slice(1));
+              
+              if (prevRow === currentRow && currentNum === prevNum + 1) {
+                currentGroup.push(seat);
+                previousSeat = seat;
+              } else {
+                if (currentGroup.length > 0) {
+                  seatGroups.push([...currentGroup]);
+                }
+                currentGroup = [seat];
+                previousSeat = seat;
+              }
             }
           });
           
@@ -55,14 +94,21 @@ function ProfileCards() {
             seatGroups.push(currentGroup);
           }
 
-          // Create a booking for each group of seats
-          const bookingsList = seatGroups.map((group, index) => ({
-            id: `booking-${index + 1}`,
-            title: `Booking ${index + 1}`,
-            description: `Seats booked together`,
-            runtime: "Active",
-            genre: "Movie Tickets",
-            ticketNumbers: group
+          // Create bookings with initial statuses
+          const bookingsList = await Promise.all(seatGroups.map(async (group, index) => {
+            const seatStatuses = await Promise.all(group.map(fetchTicketStatus));
+            const isUsed = seatStatuses.some(status => status === 'Used');
+
+            return {
+              id: `booking-${index + 1}`,
+              title: `Booking ${index + 1}`,
+              description: `${group.length} ticket${group.length > 1 ? 's' : ''} booked together`,
+              runtime: "Active",
+              genre: "Movie Tickets",
+              ticketNumbers: group,
+              status: isUsed ? 'Used' : 'Unused',
+              ticketId: `TKT-${Date.now()}-${index}`
+            };
           }));
 
           setBookings(bookingsList);
@@ -77,6 +123,11 @@ function ProfileCards() {
 
     fetchBookings();
   }, []);
+
+  useEffect(() => {
+    const statusInterval = setInterval(refreshBookingStatuses, 10000); // Refresh every 10 seconds
+    return () => clearInterval(statusInterval);
+  }, [bookings]);
 
   const handleTransfer = async () => {
     if (!recipientEmail || !selectedBooking) return;
@@ -168,6 +219,9 @@ function ProfileCards() {
               <p className="text-sm font-light">
                 <i className="ri-time-line mr-1 text-primary"></i> {item.runtime}
               </p>
+              <p className="text-sm font-light">
+                <i className="ri-checkbox-circle-line mr-1 text-primary"></i> Status: {item.status}
+              </p>
               <div className="mt-2 border-t border-gray-300"></div>
               <div className="flex flex-wrap gap-2">
                 {item.ticketNumbers.map((ticket, index) => (
@@ -188,7 +242,12 @@ function ProfileCards() {
                 </button>
                 <button 
                   onClick={() => openTransferModal(item)}
-                  className="flex-1 py-2 transition duration-500 rounded-md cursor-pointer bg-green-200/50 hover:text-frost hover:bg-green-500"
+                  disabled={item.status === 'Used'}
+                  className={`flex-1 py-2 transition duration-500 rounded-md ${
+                    item.status === 'Used' 
+                    ? 'bg-gray-300 cursor-not-allowed opacity-50' 
+                    : 'bg-green-200/50 hover:text-frost hover:bg-green-500 cursor-pointer'
+                  }`}
                 >
                   Transfer
                 </button>
@@ -289,6 +348,15 @@ function ProfileCards() {
                   </span>
                 ))}
               </div>
+            </div>
+            <div className="flex flex-col items-center mb-4">
+              <QRCodeSVG 
+                value={`${selectedMovie.title}\nSeats: ${selectedMovie.ticketNumbers.join(", ")}\nGenre: ${selectedMovie.genre}\nDuration: ${selectedMovie.runtime}\nTicket ID: ${selectedMovie.ticketNumbers[0]}\nStatus: ${selectedMovie.status || 'Unused'}`}
+                size={200}
+                level="H"
+                includeMargin={true}
+              />
+              <p className="mt-2 text-sm text-gray-600">Scan this QR code for ticket details</p>
             </div>
             <button
               className="px-4 py-2 mt-2 text-white transition duration-300 rounded-md cursor-pointer bg-primary hover:bg-secondary"
