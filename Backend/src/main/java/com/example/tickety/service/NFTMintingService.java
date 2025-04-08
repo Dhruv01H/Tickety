@@ -22,7 +22,7 @@ import java.util.HashMap;
 @Service
 public class NFTMintingService {
     private static final String GANACHE_RPC_URL = "http://127.0.0.1:7545";
-    private static final String NFT_CONTRACT_ADDRESS = "0xad7cae6415b62029a9a5e4d260d7cc4fac55b771"; // Replace with your contract address
+    private static final String NFT_CONTRACT_ADDRESS = "0x591eacdc877a93bf45c3596b31998adcb536fb17"; // Replace with your contract address
     private static final String OWNER_PRIVATE_KEY = "0x0fe2e8d48a9ed2d4a2b1f98259e9f8deb2ffa96241b0c1b427185ab8152a302c"; // Replace with the owner's private key
 
     private final Web3j web3j = Web3j.build(new HttpService(GANACHE_RPC_URL));

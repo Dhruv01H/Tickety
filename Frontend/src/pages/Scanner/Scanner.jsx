@@ -91,24 +91,30 @@ function Scanner() {
         seats: lines[1].split(': ')[1],
         genre: lines[2].split(': ')[1],
         duration: lines[3].split(': ')[1],
-        ticketId: lines[4].split(': ')[1],
-        status: lines[5].split(': ')[1]
+        ticketId: lines[4].split(': ')[1]
       };
 
       setScanResult(ticketData);
 
-      // Check if ticket is already used
-      if (ticketData.status === 'Used') {
-        setError('Ticket has already been used');
-        setShowErrorModal(true);
-        setSuccess(false);
-        return;
-      }
-
-      // If ticket is unused, update its status
+      // Fetch the current status from the backend
       try {
-        // Update ticket status
-        const response = await axios.post('http://localhost:8080/api/auth/update-ticket-status', {
+        const statusResponse = await axios.get(`http://localhost:8080/api/tickets/ticket-status/${ticketData.ticketId}`, {
+          withCredentials: true
+        });
+        
+        const currentStatus = statusResponse.data.status;
+        console.log("Current ticket status:", currentStatus);
+        
+        // Check if ticket is already used
+        if (currentStatus === 'Used') {
+          setError('Ticket has already been used');
+          setShowErrorModal(true);
+          setSuccess(false);
+          return;
+        }
+
+        // If ticket is unused, update its status
+        const response = await axios.post('http://localhost:8080/api/tickets/update-ticket-status', {
           ticketId: ticketData.ticketId,
           status: 'Used'
         }, {
@@ -128,7 +134,7 @@ function Scanner() {
           });
 
           if (sessionResponse.data && sessionResponse.data.walletAddress) {
-            await axios.get(`http://localhost:8080/api/auth/seats/${sessionResponse.data.walletAddress}`, {
+            await axios.get(`http://localhost:8080/api/tickets/seats/${sessionResponse.data.walletAddress}`, {
               withCredentials: true
             });
           }
@@ -272,7 +278,6 @@ function Scanner() {
             <p><strong>Genre:</strong> {scanResult.genre}</p>
             <p><strong>Duration:</strong> {scanResult.duration}</p>
             <p><strong>Ticket ID:</strong> {scanResult.ticketId}</p>
-            <p><strong>Status:</strong> {scanResult.status}</p>
           </div>
         </div>
       )}

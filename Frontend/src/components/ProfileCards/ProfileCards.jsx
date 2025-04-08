@@ -17,7 +17,7 @@ function ProfileCards() {
   const fetchTicketStatus = async (seat) => {
     try {
       console.log("Fetching status for seat:", seat);
-      const statusResponse = await axios.get(`http://localhost:8080/api/auth/ticket-status/${seat}`, {
+      const statusResponse = await axios.get(`http://localhost:8080/api/tickets/ticket-status/${seat}`, {
         withCredentials: true
       });
       console.log("Status response:", statusResponse.data);
@@ -57,7 +57,7 @@ function ProfileCards() {
         }
 
         const walletAddress = sessionResponse.data.walletAddress;
-        const seatsResponse = await axios.get(`http://localhost:8080/api/auth/seats/${walletAddress}`);
+        const seatsResponse = await axios.get(`http://localhost:8080/api/tickets/seats/${walletAddress}`);
         
         if (seatsResponse.data && seatsResponse.data.seatNumbers) {
           // Group seats based on their sequential order
@@ -137,7 +137,7 @@ function ProfileCards() {
     setTransferSuccess(false);
 
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/transfer-tickets', {
+      const response = await axios.post('http://localhost:8080/api/tickets/transfer-tickets', {
         recipientEmail,
         seatNumbers: selectedBooking.ticketNumbers
       }, {
@@ -151,7 +151,7 @@ function ProfileCards() {
           withCredentials: true
         });
         const walletAddress = sessionResponse.data.walletAddress;
-        const seatsResponse = await axios.get(`http://localhost:8080/api/auth/seats/${walletAddress}`);
+        const seatsResponse = await axios.get(`http://localhost:8080/api/tickets/seats/${walletAddress}`);
         
         if (seatsResponse.data && seatsResponse.data.seatNumbers) {
           // Update bookings state with new data

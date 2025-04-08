@@ -1,95 +1,84 @@
 package com.example.tickety.bean;
 
-import java.io.Serializable;
+import java.math.BigDecimal;
+import java.security.Timestamp;
+import java.time.*;
+import java.util.*;
 
 import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "show")
-public class Show implements Serializable{
-    
-    public static final long serialVersionUID = 733783470190038252L;
+@Table(name = "shows")
+public class Show {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int show_id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private String show_name;
-
-    @Column(nullable = false , columnDefinition = "TEXT")
-    private String show_description;
-
-    @Column
-    private String show_image_url;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id", nullable = false)
+    private Event event;
 
     @Column(nullable = false)
-    private int duration;
+    private int screenNumber;
 
     @Column(nullable = false)
-    private String language;
+    private LocalDateTime dateTime;
+
+    @Column(nullable = false)
+    private BigDecimal price;
 
     @CreationTimestamp
-    @Column(nullable = false, updatable = false)
-    private String created_at;
+    private Timestamp createdAt;
 
-    // ================= GETTERS AND SETTERS ================= //
-
-    public int getShow_id() {
-        return show_id;
+    // Getters & Setters
+    public UUID getId() {
+        return id;
     }
 
-    public void setShow_id(int show_id) {
-        this.show_id = show_id;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
-    public String getShow_name() {
-        return show_name;
+    public Event getEvent() {
+        return event;
     }
 
-    public void setShow_name(String show_name) {
-        this.show_name = show_name;
+    public void setEvent(Event event) {
+        this.event = event;
     }
 
-    public String getShow_description() {
-        return show_description;
+    public int getScreenNumber() {
+        return screenNumber;
     }
 
-    public void setShow_description(String show_description) {
-        this.show_description = show_description;
+    public void setScreenNumber(int screenNumber) {
+        this.screenNumber = screenNumber;
     }
 
-    public String getShow_image_url() {
-        return show_image_url;
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 
-    public void setShow_image_url(String show_image_url) {
-        this.show_image_url = show_image_url;
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 
-    public int getDuration() {
-        return duration;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
-    public String getLanguage() {
-        return language;
+    public Timestamp getCreatedAt() {
+        return createdAt;
     }
 
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public String getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(String created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 }

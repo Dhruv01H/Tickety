@@ -30,7 +30,7 @@ const SeatSelection = () => {
   useEffect(() => {
     const fetchTakenSeats = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/auth/taken-seats');
+        const response = await axios.get('http://localhost:8080/api/tickets/taken-seats');
         console.log('Received taken seats:', response.data.takenSeats);
         if (response.data.takenSeats) {
           // Use the seat numbers exactly as they come from the backend
@@ -121,7 +121,7 @@ const SeatSelection = () => {
       });
 
       // Mint NFTs for selected seats
-      const response = await axios.post('http://localhost:8080/api/auth/mint-selected-seats', {
+      const response = await axios.post('http://localhost:8080/api/tickets/mint-selected-seats', {
         selectedSeats: seatNumbers
       }, {
         withCredentials: true // Important for sending cookies
@@ -130,7 +130,7 @@ const SeatSelection = () => {
       if (response.data.message === "Tickets minted successfully") {
         console.log('Tickets minted successfully, fetching updated seats');
         // Fetch updated taken seats after successful minting
-        const takenSeatsResponse = await axios.get('http://localhost:8080/api/auth/taken-seats');
+        const takenSeatsResponse = await axios.get('http://localhost:8080/api/tickets/taken-seats');
         console.log('Received updated taken seats:', takenSeatsResponse.data.takenSeats);
         if (takenSeatsResponse.data.takenSeats) {
           // Use the seat numbers exactly as they come from the backend
