@@ -18,6 +18,7 @@ import ProfileCards from "./ProfileCards/ProfileCards";
 import LoadingAnimation from "./LoadingAnimation/LoadingAnimation";
 import ProfileLoading from "./LoadingAnimation/ProfileLoading";
 import Upcoming from "./Upcoming/Upcoming";
+import Sidebar from "./Sidebar/Sidebar";
 
 export { 
     Navbar,
@@ -40,4 +41,5 @@ export {
     LoadingAnimation,
     ProfileLoading,
     Upcoming,
+    Sidebar,
 }

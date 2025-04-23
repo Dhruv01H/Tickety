@@ -4,12 +4,15 @@ export const AppContext = createContext();
 
 const AppContextProvider = (props) => {
   const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(true);
   const [ selectedSeats, setSelectedSeats ] = useState(2)
   const [isPopupOpen, setIsPopupOpen] = useState(true);
 
   const value = {
     user,
     setUser,
+    isAdmin,
+    setIsAdmin,
     selectedSeats,
     setSelectedSeats,
     isPopupOpen,
