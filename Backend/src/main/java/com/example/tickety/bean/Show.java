@@ -1,7 +1,7 @@
 package com.example.tickety.bean;
 
 import java.math.BigDecimal;
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.time.*;
 import java.util.*;
 

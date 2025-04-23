@@ -14,7 +14,8 @@ public class Event implements Serializable{
     public static final long serialVersionUID = 733783470190038252L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private int id;
 
     @Column(nullable = false, unique = true)
@@ -35,9 +36,6 @@ public class Event implements Serializable{
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private String created_at;
-
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Show> shows;
 
     // ================= GETTERS AND SETTERS ================= //
 
@@ -97,11 +95,4 @@ public class Event implements Serializable{
         this.created_at = created_at;
     }
 
-    public List<Show> getShows() {
-        return shows;
-    }
-
-    public void setShows(List<Show> shows) {
-        this.shows = shows;
-    }
 }

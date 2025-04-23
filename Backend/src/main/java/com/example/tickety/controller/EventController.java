@@ -21,4 +21,10 @@ public class EventController {
     public List<Event> getAllEvents() {
         return eventRepository.findAll();
     }
+
+    @PostMapping("/add")
+    public Event addEvent(@RequestBody Event event){
+        // Ensure the name field is set to the same value as show_name if it's null
+        return eventRepository.save(event);
+    }
 }

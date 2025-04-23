@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
-
+import axios from 'axios'
+import { toast } from "react-toastify";
+import { useNavigate } from 'react-router-dom'
+import "react-toastify/dist/ReactToastify.css";
 function AddMovie() {
   const [movieData, setMovieData] = useState({
     name: "",
@@ -33,10 +36,44 @@ function AddMovie() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitting movie data:", movieData);
-    // Add API call to submit data here
+    
+    // Create the event object with the correct field names
+    const eventData = {
+      show_name: movieData.name,
+      show_description: movieData.description,
+      show_image_url: movieData.imageUrl,
+      duration: parseInt(movieData.duration),
+      language: movieData.languages.join(", ") // Join languages with comma separator
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/events/add",
+        eventData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Response:", response.data);
+      toast.success("Movie added successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      setTimeout(() => {
+        navigate("/admin/movies");
+      }, 3000);
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      toast.error("Movie addition failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
   };
 
   return (
