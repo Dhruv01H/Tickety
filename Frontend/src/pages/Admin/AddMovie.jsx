@@ -183,7 +183,7 @@ function AddMovie() {
               duration: "",
               languages: []
             })}
-            className="px-8 py-3.5 font-medium cursor-pointer text-gray-800 transition-colors duration-200 rounded-md hover:bg-gray-400"
+            className="px-8 py-3.5 font-medium cursor-pointer text-gray-800 transition-colors duration-200 rounded-md bg-gray-200 hover:bg-gray-400"
           >
             Clear Form
           </button>
