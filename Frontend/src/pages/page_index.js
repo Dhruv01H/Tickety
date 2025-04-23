@@ -9,6 +9,9 @@ import BookTickets from "./BookTickets/BookTickets";
 import Charlie from "./Charlie/Charlie";
 import Movies from "./Movies/Movies";
 import Scanner from "./Scanner/Scanner";
+import AdminHome from "./Admin/AdminHome";
+import AddMovie from "./Admin/AddMovie";
+import Showtime from "./Admin/Showtime";
 
 export { 
     Home,
@@ -22,4 +25,7 @@ export {
     Charlie,
     Movies,
     Scanner,
+    AdminHome,
+    AddMovie,
+    Showtime,
 }
