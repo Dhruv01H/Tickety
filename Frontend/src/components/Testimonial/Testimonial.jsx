@@ -1,20 +1,42 @@
 import React from "react";
 import { assets } from "../../assets/assets";
+import { motion } from "framer-motion";
 
 function Testimonial() {
   return (
     <div className="">
       <div className="px-12 py-6 mt-10 mb-24 xl:px-60">
-        <h2 className="mb-2 text-4xl font-semibold text-center md:text-6xl text-primary font-quantico">
+        <motion.h2
+          initial={{ opacity: 0, scale: 0.97 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8 }}
+          className="mb-2 text-4xl font-semibold text-center md:text-6xl text-primary font-quantico"
+        >
           Testimonials
-        </h2>
+        </motion.h2>
 
-        <p className="mb-12 text-base text-center md:text-2xl">
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+          className="mb-12 text-base text-center md:text-2xl"
+        >
           See what our users say about us
-        </p>
+        </motion.p>
 
         <div className="flex flex-col gap-8 xl:grid xl:grid-cols-10 xl:grid-rows-3">
-          <div className="xl:col-span-4 xl:row-span-2 rounded-2xl p-[1.3px] bg-slate-200 hover:scale-105 transition-all duration-500 hover:bg-gradient-to-br hover:from-[#2E3640] hover:via-[#AB2E58] hover:to-[#D71A57]">
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.97 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{
+              duration: 0.7,
+              delay: 1 * 0.2,
+            }}
+            viewport={{ once: true, amount: 0.1 }}
+            className="xl:col-span-4 xl:row-span-2 rounded-2xl p-[1.3px] bg-slate-200 hover:scale-105 transition-all duration-500 hover:bg-gradient-to-br hover:from-[#2E3640] hover:via-[#AB2E58] hover:to-[#D71A57]"
+          >
             <div className="w-full h-full bg-white rounded-2xl">
               <div className="flex items-center gap-3 p-3 md:justify-around sm:p-6 xl:gap-10">
                 <img
@@ -51,9 +73,18 @@ function Testimonial() {
                 </span>
               </p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="xl:col-span-4 xl:row-span-1 rounded-2xl p-[1.3px] bg-slate-200 hover:scale-105 transition-all duration-500 hover:bg-gradient-to-br hover:from-[#2E3640] hover:via-[#AB2E58] hover:to-[#D71A57]">
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.97 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{
+              duration: 0.7,
+              delay: 2 * 0.2,
+            }}
+            viewport={{ once: true, amount: 0.1 }}
+            className="xl:col-span-4 xl:row-span-1 rounded-2xl p-[1.3px] bg-slate-200 hover:scale-105 transition-all duration-500 hover:bg-gradient-to-br hover:from-[#2E3640] hover:via-[#AB2E58] hover:to-[#D71A57]"
+          >
             <div className="w-full h-full bg-white rounded-2xl">
               <div className="flex items-center gap-3 p-3 md:justify-around sm:p-6 xl:gap-14">
                 <img
@@ -80,9 +111,18 @@ function Testimonial() {
                 Fugit!
               </p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="xl:col-span-2 xl:row-span-1 rounded-2xl p-[1.3px] bg-slate-200 hover:bg-gradient-to-br hover:from-[#2E3640] hover:via-[#AB2E58] hover:to-[#D71A57] hover:scale-105 transition-all duration-500">
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.97 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{
+              duration: 0.7,
+              delay: 3 * 0.2,
+            }}
+            viewport={{ once: true, amount: 0.1 }}
+            className="xl:col-span-2 xl:row-span-1 rounded-2xl p-[1.3px] bg-slate-200 hover:bg-gradient-to-br hover:from-[#2E3640] hover:via-[#AB2E58] hover:to-[#D71A57] hover:scale-105 transition-all duration-500"
+          >
             <div className="w-full h-full bg-white rounded-2xl">
               <div className="flex items-center gap-3 p-3 md:justify-around sm:p-6">
                 <img
@@ -107,9 +147,18 @@ function Testimonial() {
                 Fugit!
               </p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="xl:col-span-3 xl:row-span-2 rounded-2xl p-[1.3px] bg-slate-200 hover:scale-105 transition-all duration-500 hover:bg-gradient-to-br hover:from-[#2E3640] hover:via-[#AB2E58] hover:to-[#D71A57]">
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.97 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{
+              duration: 0.7,
+              delay: 4 * 0.2,
+            }}
+            viewport={{ once: true, amount: 0.1 }}
+            className="xl:col-span-3 xl:row-span-2 rounded-2xl p-[1.3px] bg-slate-200 hover:scale-105 transition-all duration-500 hover:bg-gradient-to-br hover:from-[#2E3640] hover:via-[#AB2E58] hover:to-[#D71A57]"
+          >
             <div className="w-full h-full bg-white rounded-2xl">
               <div className="flex items-center gap-3 p-3 md:justify-around sm:p-6 xl:gap-8">
                 <img
@@ -143,9 +192,18 @@ function Testimonial() {
                 </span>
               </p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="xl:col-span-3 xl:row-span-2 rounded-2xl p-[1.3px] bg-slate-200 max-md:hidden hover:scale-105 transition-all duration-500 hover:bg-gradient-to-br hover:from-[#2E3640] hover:via-[#AB2E58] hover:to-[#D71A57]">
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.97 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{
+              duration: 0.7,
+              delay: 5 * 0.2,
+            }}
+            viewport={{ once: true, amount: 0.1 }}
+            className="xl:col-span-3 xl:row-span-2 rounded-2xl p-[1.3px] bg-slate-200 max-md:hidden hover:scale-105 transition-all duration-500 hover:bg-gradient-to-br hover:from-[#2E3640] hover:via-[#AB2E58] hover:to-[#D71A57]"
+          >
             <div className="w-full h-full bg-white rounded-2xl">
               <div className="flex items-center gap-3 p-3 md:justify-around sm:p-6 xl:gap-8">
                 <img
@@ -180,9 +238,18 @@ function Testimonial() {
                 </span>
               </p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="xl:col-span-4 xl:row-span-1 rounded-2xl p-[1.3px] bg-slate-200 hover:scale-105 transition-all max-md:hidden duration-500 hover:bg-gradient-to-br hover:from-[#2E3640] hover:via-[#AB2E58] hover:to-[#D71A57]">
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.97 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{
+              duration: 0.7,
+              delay: 6 * 0.2,
+            }}
+            viewport={{ once: true, amount: 0.1 }}
+            className="xl:col-span-4 xl:row-span-1 rounded-2xl p-[1.3px] bg-slate-200 hover:scale-105 transition-all max-md:hidden duration-500 hover:bg-gradient-to-br hover:from-[#2E3640] hover:via-[#AB2E58] hover:to-[#D71A57]"
+          >
             <div className="w-full h-full bg-white rounded-2xl">
               <div className="flex items-center gap-3 p-3 md:justify-around sm:p-6 xl:gap-8">
                 <img
@@ -207,7 +274,7 @@ function Testimonial() {
                 Fugit!
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>
