@@ -3,20 +3,20 @@ import { Hero, ActionCards, MovieCarousel, EventCarousel, Testimonial, MovieStat
 import LoadingAnimation from "../../components/LoadingAnimation/LoadingAnimation";
 
 function Home() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); //
 
-  useEffect(() => {
-    // Simulate loading time for components
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000); // Show loading for 2 seconds
+  // useEffect(() => {
+  //   // Simulate loading time for components
+  //   const timer = setTimeout(() => {
+  //     setIsLoading(false);
+  //   }, 2000); // Show loading for 2 seconds
 
-    return () => clearTimeout(timer);
-  }, []);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
-  if (isLoading) {
-    return <LoadingAnimation />;
-  }
+  // if (isLoading) {
+  //   return <LoadingAnimation />;
+  // }
 
   return (
     <>
