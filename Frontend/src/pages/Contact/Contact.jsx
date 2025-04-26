@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -24,7 +25,7 @@ function Contact() {
     } else {
       toast.error(message);
     }
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,15 +65,25 @@ function Contact() {
 
   return (
     <>
-      <div className="bg-[url('./contact.jpg')] w-full bg-cover bg-no-repeat h-[50vh] flex flex-col items-center justify-center text-frost">
-        <h2 className="p-3 text-4xl font-medium md:text-5xl md:-mt-16 md:mb-2">
+      <div className="bg-[url('./contact.jpg')] w-full bg-cover bg-no-repeat h-[60vh] flex flex-col items-center justify-center text-frost">
+        <motion.h2
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2 }}
+          className="p-3 text-4xl font-medium md:text-6xl md:-mt-16 md:mb-2"
+        >
           Contact Us
-        </h2>
-        <p className="px-3 text-sm text-center md:text-lg">
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 1.2, delay: 0.5 }}
+          className="px-3 text-sm text-center md:text-lg"
+        >
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis,
           modi molestias
           <br /> et sapiente praesentium quaerat?
-        </p>
+        </motion.p>
       </div>
 
       <div className="relative flex items-center justify-center p-3 mt-10 mb-10 text-frost md:mb-80">
@@ -87,8 +98,11 @@ function Contact() {
           </p>
         )}
 
-        <form
+        <motion.form
           onSubmit={handleSubmit}
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1 }}
           className="w-full max-w-lg p-8 bg-gray-800 rounded-2xl md:max-w-5xl md:absolute md:-top-52"
         >
           <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-2">
@@ -176,11 +190,20 @@ function Contact() {
               Send message
             </button>
           </div>
-        </form>
+        </motion.form>
       </div>
 
       <div className="grid grid-cols-1 px-12 py-6 xl:px-60 md:grid-cols-2 lg:grid-cols-3">
-        <div className="flex flex-col items-center justify-center p-10">
+        <motion.div
+          initial={{ opacity: 0, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 0.7,
+            delay: 1 * 0.2,
+          }}
+          viewport={{ once: true, amount: 0.2 }}
+          className="flex flex-col items-center justify-center p-10"
+        >
           <i className="p-4 mb-3 text-4xl text-frost ri-mail-line rounded-xl bg-primary"></i>
           <h3 className="mb-2 text-2xl font-medium">Email us:</h3>
           <p className="mb-2 text-center">
@@ -190,9 +213,18 @@ function Contact() {
           <p className="cursor-pointer hover:underline hover:text-primary">
             hello@docappoint.com
           </p>
-        </div>
+        </motion.div>
 
-        <div className="flex flex-col items-center justify-center p-10">
+        <motion.div
+          initial={{ opacity: 0, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 0.7,
+            delay: 2 * 0.2,
+          }}
+          viewport={{ once: true, amount: 0.2 }}
+          className="flex flex-col items-center justify-center p-10"
+        >
           <i className="p-4 mb-3 text-4xl text-frost ri-phone-line rounded-xl bg-primary"></i>
           <h3 className="mb-2 text-2xl font-medium">Call us:</h3>
           <p className="mb-2 text-center">
@@ -202,9 +234,18 @@ function Contact() {
           <p className="cursor-pointer hover:underline hover:text-primary">
             +91 1234567890
           </p>
-        </div>
+        </motion.div>
 
-        <div className="flex flex-col items-center justify-center p-10">
+        <motion.div
+          initial={{ opacity: 0, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 0.7,
+            delay: 3 * 0.2,
+          }}
+          viewport={{ once: true, amount: 0.2 }}
+          className="flex flex-col items-center justify-center p-10"
+        >
           <i className="p-4 mb-3 text-4xl text-frost ri-map-pin-line rounded-xl bg-primary"></i>
           <h3 className="mb-2 text-2xl font-medium">Location</h3>
           <p className="mb-2 text-center">
@@ -214,7 +255,7 @@ function Contact() {
           <p className="cursor-pointer hover:underline hover:text-primary">
             loaction link
           </p>
-        </div>
+        </motion.div>
       </div>
     </>
   );
