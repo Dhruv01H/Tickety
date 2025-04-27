@@ -13,6 +13,7 @@ import Event from "./Event/Event";
 import AdminHome from "./Admin/AdminHome";
 import AddMovie from "./Admin/AddMovie";
 import Showtime from "./Admin/Showtime";
+import ScreenManagement from "./Admin/ScreenManagement";
 
 export { 
     Home,
@@ -30,4 +31,5 @@ export {
     AdminHome,
     AddMovie,
     Showtime,
+    ScreenManagement,
 }

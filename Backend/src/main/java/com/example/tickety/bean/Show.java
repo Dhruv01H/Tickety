@@ -21,8 +21,9 @@ public class Show {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    @Column(nullable = false)
-    private int screenNumber;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "screen_id", nullable = false)
+    private Screen screen;
 
     @Column(nullable = false)
     private LocalDateTime dateTime;
@@ -50,12 +51,12 @@ public class Show {
         this.event = event;
     }
 
-    public int getScreenNumber() {
-        return screenNumber;
+    public Screen getScreen() {
+        return screen;
     }
 
-    public void setScreenNumber(int screenNumber) {
-        this.screenNumber = screenNumber;
+    public void setScreen(Screen screen) {
+        this.screen = screen;
     }
 
     public LocalDateTime getDateTime() {

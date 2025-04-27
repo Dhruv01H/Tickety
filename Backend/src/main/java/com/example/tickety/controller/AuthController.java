@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -46,6 +47,24 @@ public class AuthController {
     // ✅ Sign in 
     @PostMapping("/signin")
     public ResponseEntity<?> signin(@RequestBody Person person, HttpSession session) {
+        
+
+        // Check for admin credentials
+        if (person.getEmail().equals("admin@gmail.com") && person.getPassword().equals("admin1234")) {
+            // Create a temporary person object for admin
+            Person adminPerson = new Person();
+            adminPerson.setEmail("admin@gmail.com");
+            adminPerson.setName("Admin");
+            adminPerson.setIs_verified(true);
+            
+            session.setAttribute("user", adminPerson);
+            session.setAttribute("isAdmin", true);
+            return ResponseEntity.ok(Map.of(
+                "message", "Admin Login Successful",
+                "isAdmin", true
+            ));
+        }
+
         Optional<Person> optionalPerson = personRepository.findByEmail(person.getEmail());
 
         if (optionalPerson.isEmpty()) {
@@ -68,7 +87,11 @@ public class AuthController {
         }
 
         session.setAttribute("user", p);
-        return ResponseEntity.ok(Map.of("message", "Login Successful"));
+        session.setAttribute("isAdmin", false);
+        return ResponseEntity.ok(Map.of(
+            "message", "Login Successful",
+            "isAdmin", false
+        ));
     }
 
     // ✅ Sign up
@@ -124,15 +147,27 @@ public class AuthController {
     @GetMapping("/session")
     public ResponseEntity<?> getSession(HttpSession session) {
         Person user = (Person) session.getAttribute("user");
+        Boolean isAdmin = (Boolean) session.getAttribute("isAdmin");
+        
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user logged in");
         }
-        return ResponseEntity.ok(user);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", user.getId());
+        response.put("name", user.getName());
+        response.put("email", user.getEmail());
+        response.put("phone", user.getPhone());
+        response.put("walletAddress", user.getWalletAddress());
+        response.put("isAdmin", isAdmin != null ? isAdmin : false);
+        
+        return ResponseEntity.ok(response);
     }
 
     // ✅ Logout
     @GetMapping("/logout")
     public ResponseEntity<String> logout(HttpSession session) {
+        session.removeAttribute("isAdmin");
         session.invalidate();
         return ResponseEntity.ok("Session ended. You have been logged out.");
     }
