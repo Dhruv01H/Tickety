@@ -212,30 +212,30 @@ function Scanner() {
 
         {isCameraActive && (
           <div className="relative mb-4">
-            <video
-              ref={videoRef}
+          <video
+            ref={videoRef}
               className="w-full rounded-lg"
-              autoPlay
-              playsInline
-            />
-            <button
+            autoPlay
+            playsInline
+          />
+          <button
               onClick={stopCamera}
               className="absolute top-2 right-2 p-2 text-white transition-colors duration-200 rounded-full bg-primary hover:bg-pink-600"
-            >
+          >
               Stop Camera
-            </button>
+          </button>
           </div>
         )}
 
         {/* File Upload */}
         <div className="mb-4">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileUpload}
-            className="hidden"
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileUpload}
+              className="hidden"
             id="file-upload"
-          />
+            />
           <label
             htmlFor="file-upload"
             className="block w-full px-4 py-2 text-white transition-colors duration-200 rounded-md cursor-pointer bg-primary hover:bg-pink-600"
@@ -251,9 +251,9 @@ function Scanner() {
               <h3 className="mb-4 text-2xl font-bold text-green-600">Ticket Scanned Successfully!</h3>
               <p className="mb-4 text-gray-700">Enjoy your show!</p>
               <p className="text-sm text-gray-500">This message will close automatically in 5 seconds.</p>
-            </div>
-          </div>
-        )}
+      </div>
+        </div>
+      )}
 
         {/* Error Modal */}
         {showErrorModal && (
@@ -272,22 +272,22 @@ function Scanner() {
               >
                 Scan Another
               </button>
-            </div>
-          </div>
-        )}
+        </div>
+        </div>
+      )}
 
         {/* Scan Result */}
         {scanResult && !showSuccessModal && !showErrorModal && (
           <div className="p-4 mt-4 text-left bg-gray-50 rounded-lg">
-            <h2 className="mb-4 text-2xl font-semibold">Ticket Details</h2>
+          <h2 className="mb-4 text-2xl font-semibold">Ticket Details</h2>
             <p><strong>Title:</strong> {scanResult.title}</p>
             <p><strong>Seats:</strong> {scanResult.seats}</p>
             <p><strong>Genre:</strong> {scanResult.genre}</p>
             <p><strong>Duration:</strong> {scanResult.duration}</p>
             <p><strong>Ticket ID:</strong> {scanResult.ticketId}</p>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
+        </div>
     </div>
   );
 }
