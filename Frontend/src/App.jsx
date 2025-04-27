@@ -1,10 +1,10 @@
 import "./App.css";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AppContext } from "./context/AppContext.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
-import { Navbar, Footer, Sidebar } from "./components/component_index.js";
+import { Navbar, Footer, Sidebar, LoadingAnimation } from "./components/component_index.js";
 import {
   Home,
   Profile,
@@ -32,7 +32,7 @@ function AppContent() {
   const navRoutes = ["/ticket", "/signin", "/signup"];
 
   // Redirect to admin dashboard if admin user is on non-admin routes
-  if (isAdmin && !location.pathname.startsWith('/admin')) {
+  if (isAdmin && !location.pathname.startsWith("/admin")) {
     return <Navigate to="/admin/home" replace />;
   }
 
@@ -55,33 +55,44 @@ function AppContent() {
           </div>
         </div>
       ) : (
-
-          <AppContextProvider>
-            {!navRoutes.includes(location.pathname) && <Navbar />}
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/signin" element={<SignIn />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/movie" element={<Movies />} />
-              <Route path="/event" element={<Event />} />
-              <Route path="/ticket" element={<BookTickets />} />
-              <Route path="/charlie" element={<Charlie />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/faq" element={<FAQ />} />
-            </Routes>
-            {!footerRoutes.includes(location.pathname) && <Footer />}
-          </AppContextProvider>
+        <AppContextProvider>
+          {!navRoutes.includes(location.pathname) && <Navbar />}
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/movie" element={<Movies />} />
+            <Route path="/event" element={<Event />} />
+            <Route path="/ticket" element={<BookTickets />} />
+            <Route path="/charlie" element={<Charlie />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/faq" element={<FAQ />} />
+          </Routes>
+          {!footerRoutes.includes(location.pathname) && <Footer />}
+        </AppContextProvider>
       )}
     </>
   );
 }
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time for components
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000); // Show loading for 2 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <AppContextProvider>
-      <AppContent />
+    {isLoading ? <LoadingAnimation /> : <AppContent />}
+      {/* <AppContent /> */}
     </AppContextProvider>
   );
 }
