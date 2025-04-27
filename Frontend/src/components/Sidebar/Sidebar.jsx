@@ -99,6 +99,19 @@ function Sidebar() {
           >
             <i className="text-xl ri-layout-grid-line"></i> Screen Management
           </NavLink>
+
+          <NavLink
+            to="/admin/screen-shows"
+            className={({ isActive }) =>
+              `flex items-center gap-3 p-3 rounded-lg ${
+                isActive
+                  ? "bg-primary text-white"
+                  : "text-gray-300 hover:bg-gray-800"
+              }`
+            }
+          >
+            <i className="text-xl ri-calendar-todo-line"></i> Screen Shows
+          </NavLink>
           
           <NavLink
             to="/admin/scanner"

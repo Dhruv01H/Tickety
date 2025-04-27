@@ -2,19 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import SeatingLayoutPreview from '../../components/SeatingLayoutPreview/SeatingLayoutPreview';
 
-function ScreenManagement() {
+function ScreenShows() {
   const [screens, setScreens] = useState([]);
   const [selectedScreen, setSelectedScreen] = useState(null);
   const [shows, setShows] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editingScreen, setEditingScreen] = useState(null);
-  const [formData, setFormData] = useState({
-    screenNumber: '',
-    capacity: '',
-    screenType: 'standard'
-  });
 
   useEffect(() => {
     fetchScreens();
@@ -22,6 +15,7 @@ function ScreenManagement() {
 
   useEffect(() => {
     if (selectedScreen) {
+      console.log('Selected screen:', selectedScreen);
       fetchShowsForScreen(selectedScreen.screenNumber);
     }
   }, [selectedScreen]);
@@ -29,6 +23,7 @@ function ScreenManagement() {
   const fetchScreens = async () => {
     try {
       const response = await axios.get("http://localhost:8080/api/screens");
+      console.log('Fetched screens:', response.data);
       setScreens(response.data);
       setLoading(false);
     } catch (error) {
@@ -40,7 +35,9 @@ function ScreenManagement() {
 
   const fetchShowsForScreen = async (screenNumber) => {
     try {
+      console.log('Fetching shows for screen:', screenNumber);
       const response = await axios.get(`http://localhost:8080/api/events/shows/screen/${screenNumber}`);
+      console.log('Fetched shows:', response.data);
       setShows(response.data);
     } catch (error) {
       console.error("Error fetching shows:", error);
@@ -58,73 +55,6 @@ function ScreenManagement() {
     });
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'capacity') {
-      const capacityValue = parseInt(value);
-      if (capacityValue > 280) {
-        toast.error('Maximum capacity cannot exceed 280 seats');
-        return;
-      }
-    }
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const capacityValue = parseInt(formData.capacity);
-    if (capacityValue > 280) {
-      toast.error('Maximum capacity cannot exceed 280 seats');
-      return;
-    }
-    try {
-      if (editingScreen) {
-        await axios.put(`http://localhost:8080/api/screens/${editingScreen.id}`, formData);
-        toast.success('Screen updated successfully');
-      } else {
-        await axios.post('http://localhost:8080/api/screens', formData);
-        toast.success('Screen added successfully');
-      }
-      fetchScreens();
-      resetForm();
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to save screen');
-    }
-  };
-
-  const handleEdit = (screen) => {
-    setEditingScreen(screen);
-    setFormData({
-      screenNumber: screen.screenNumber,
-      capacity: screen.capacity,
-      screenType: screen.screenType
-    });
-  };
-
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this screen?')) {
-      try {
-        await axios.delete(`http://localhost:8080/api/screens/${id}`);
-        toast.success('Screen deleted successfully');
-        fetchScreens();
-      } catch (error) {
-        toast.error('Failed to delete screen');
-      }
-    }
-  };
-
-  const resetForm = () => {
-    setEditingScreen(null);
-    setFormData({
-      screenNumber: '',
-      capacity: '',
-      screenType: 'standard'
-    });
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -135,7 +65,7 @@ function ScreenManagement() {
 
   return (
     <div className="p-6">
-      <h1 className="mb-8 text-4xl font-bold text-primary">Screen Management</h1>
+      <h1 className="mb-8 text-4xl font-bold text-primary">Screen Shows</h1>
       
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Screens List */}
@@ -150,7 +80,10 @@ function ScreenManagement() {
                     ? 'border-primary bg-primary/5'
                     : 'border-gray-200 hover:border-primary'
                 }`}
-                onClick={() => setSelectedScreen(screen)}
+                onClick={() => {
+                  console.log('Screen clicked:', screen);
+                  setSelectedScreen(screen);
+                }}
               >
                 <h3 className="text-lg font-medium">Screen {screen.screenNumber}</h3>
                 <p className="text-sm text-gray-600">
@@ -187,7 +120,7 @@ function ScreenManagement() {
                         </div>
                         <div>
                           <p className="text-sm text-gray-600">Duration</p>
-                          <p className="font-medium">{show.event.duration} minutes</p>
+                          <p className="font-medium">{show.event?.duration} minutes</p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-600">Price</p>
@@ -210,4 +143,4 @@ function ScreenManagement() {
   );
 }
 
-export default ScreenManagement; 
+export default ScreenShows; 

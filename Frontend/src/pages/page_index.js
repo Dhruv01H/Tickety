@@ -14,6 +14,7 @@ import AdminHome from "./Admin/AdminHome";
 import AddMovie from "./Admin/AddMovie";
 import Showtime from "./Admin/Showtime";
 import ScreenManagement from "./Admin/ScreenManagement";
+import ScreenShows from "./Admin/ScreenShows";
 
 export { 
     Home,
@@ -32,4 +33,5 @@ export {
     AddMovie,
     Showtime,
     ScreenManagement,
+    ScreenShows,
 }

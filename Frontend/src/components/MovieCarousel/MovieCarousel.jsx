@@ -8,10 +8,16 @@ import "react-toastify/dist/ReactToastify.css";
 function MovieCarousel() {
   const navigate = useNavigate();
   const [movies, setMovies] = useState([]);
+  const [allShows, setAllShows] = useState([]);
+  const [selectedMovie, setSelectedMovie] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchMovies();
+    fetchAllShows();
+    // Set up interval to refresh shows every minute
+    const interval = setInterval(fetchAllShows, 60000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchMovies = async () => {
@@ -24,6 +30,48 @@ function MovieCarousel() {
       toast.error("Failed to fetch movies");
       setIsLoading(false);
     }
+  };
+
+  const fetchAllShows = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/events/shows/all");
+      // Filter out shows that have already started
+      const currentTime = new Date();
+      const validShows = response.data.filter(show => {
+        const showTime = new Date(show.dateTime);
+        return showTime > currentTime;
+      });
+      setAllShows(validShows);
+    } catch (error) {
+      console.error("Error fetching shows:", error);
+      toast.error("Failed to fetch shows");
+    }
+  };
+
+  const formatDateTime = (dateTime) => {
+    return new Date(dateTime).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const handleBookTicket = (show) => {
+    navigate('/ticket', { state: { show } });
+  };
+
+  const getShowsForMovie = (movieId) => {
+    return allShows.filter(show => show.event?.id === movieId);
+  };
+
+  const isShowStartingSoon = (dateTime) => {
+    const showTime = new Date(dateTime);
+    const currentTime = new Date();
+    const timeDiff = showTime - currentTime;
+    // Show is starting in less than 30 minutes
+    return timeDiff > 0 && timeDiff <= 30 * 60 * 1000;
   };
 
   return (
@@ -72,7 +120,6 @@ function MovieCarousel() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 1.5 }}
-              onClick={() => navigate("/ticket")}
               key={movie.id}
               className="relative overflow-hidden group transition-all duration-700 border-[5px] border-transparent rounded-md hover:border-primary"
             >
@@ -96,14 +143,94 @@ function MovieCarousel() {
                   {movie.language} / {movie.duration} Mins
                 </p>
                 <button
-                  onClick={() => navigate("/ticket")}
+                  onClick={() => setSelectedMovie(movie)}
                   className="text-frost px-3 py-1.5 border border-frost rounded-md cursor-pointer transition-all duration-700 group-hover:bg-primary group-hover:text-white group-hover:border-primary"
                 >
-                  Get Ticket
+                  View Shows
                 </button>
               </div>
             </motion.div>
           ))}
+        </div>
+      )}
+
+      {/* Shows Modal */}
+      {selectedMovie && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="w-full max-w-4xl p-6 bg-white rounded-lg shadow-lg">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <img
+                  src={selectedMovie.show_image_url}
+                  alt={selectedMovie.show_name}
+                  className="w-24 h-24 object-cover rounded-lg"
+                  onError={(e) => {
+                    e.target.src = "https://via.placeholder.com/100x100?text=No+Image";
+                  }}
+                />
+                <div>
+                  <h2 className="text-2xl font-semibold">{selectedMovie.show_name}</h2>
+                  <p className="text-gray-600">{selectedMovie.language} / {selectedMovie.duration} Mins</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedMovie(null)}
+                className="p-2 text-gray-500 hover:text-gray-700"
+              >
+                <i className="text-2xl ri-close-line"></i>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {getShowsForMovie(selectedMovie.id).length === 0 ? (
+                <div className="col-span-2 p-8 text-center border-2 border-dashed border-gray-300 rounded-lg">
+                  <p className="text-xl text-gray-600">No shows scheduled for this movie</p>
+                </div>
+              ) : (
+                getShowsForMovie(selectedMovie.id).map((show) => (
+                  <div
+                    key={show.id}
+                    className={`p-4 border rounded-lg ${
+                      isShowStartingSoon(show.dateTime)
+                        ? 'border-yellow-500 bg-yellow-50'
+                        : 'border-gray-200'
+                    }`}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-sm text-gray-600">Screen</p>
+                        <p className="font-medium">Screen {show.screen?.screenNumber || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Price</p>
+                        <p className="font-medium">₹{show.price || 'N/A'}</p>
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <p className="text-sm text-gray-600">Show Time</p>
+                      <p className="font-medium">{show.dateTime ? formatDateTime(show.dateTime) : 'N/A'}</p>
+                      {isShowStartingSoon(show.dateTime) && (
+                        <p className="mt-1 text-sm text-yellow-600">
+                          <i className="ri-time-line mr-1"></i>
+                          Starting soon!
+                        </p>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => handleBookTicket(show)}
+                      className={`w-full mt-4 px-4 py-2 text-white transition-colors duration-200 rounded-md ${
+                        isShowStartingSoon(show.dateTime)
+                          ? 'bg-yellow-500 hover:bg-yellow-600'
+                          : 'bg-primary hover:bg-secondary'
+                      }`}
+                    >
+                      Book Tickets
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
