@@ -54,6 +54,7 @@ function AppContent() {
         </div>
       ) : (
         <>
+        <>
           {!navRoutes.includes(location.pathname) && <Navbar />}
           <Routes>
             <Route path="/" element={<Home />} />
@@ -66,9 +67,11 @@ function AppContent() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
             <Route path="/faq" element={<FAQ />} />
+            <Route path="/scanner" element={<Scanner />} /> {/* Added user scanner route */}
             <Route path="/scanner" element={<Scanner />} />
           </Routes>
           {!footerRoutes.includes(location.pathname) && <Footer />}
+        </>
         </>
       )}
     </>
@@ -76,8 +79,20 @@ function AppContent() {
 }
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time for components
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000); // Show loading for 3 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <AppContextProvider>
+      {isLoading ? <LoadingAnimation /> : <AppContent />}
       <AppContent />
     </AppContextProvider>
   );
