@@ -60,12 +60,21 @@ function ProfileCards() {
         const seatsResponse = await axios.get(`http://localhost:8080/api/tickets/seats/${walletAddress}`);
         
         if (seatsResponse.data && seatsResponse.data.seatNumbers) {
-          // Group seats based on their sequential order
+          // Group seats based on their sequential order and row
           const seatGroups = [];
           let currentGroup = [];
           let previousSeat = null;
           
-          const sortedSeats = [...seatsResponse.data.seatNumbers].sort();
+          const sortedSeats = [...seatsResponse.data.seatNumbers].sort((a, b) => {
+            // First sort by row
+            const rowA = a.charAt(0);
+            const rowB = b.charAt(0);
+            if (rowA !== rowB) {
+              return rowA.localeCompare(rowB);
+            }
+            // Then sort by seat number
+            return parseInt(a.slice(1)) - parseInt(b.slice(1));
+          });
           
           sortedSeats.forEach((seat) => {
             if (previousSeat === null) {
@@ -77,6 +86,7 @@ function ProfileCards() {
               const currentRow = seat.charAt(0);
               const currentNum = parseInt(seat.slice(1));
               
+              // Check if seats are in the same row and consecutive
               if (prevRow === currentRow && currentNum === prevNum + 1) {
                 currentGroup.push(seat);
                 previousSeat = seat;
@@ -94,20 +104,26 @@ function ProfileCards() {
             seatGroups.push(currentGroup);
           }
 
-          // Create bookings with initial statuses
+          // Create bookings with initial statuses and additional information
           const bookingsList = await Promise.all(seatGroups.map(async (group, index) => {
             const seatStatuses = await Promise.all(group.map(fetchTicketStatus));
             const isUsed = seatStatuses.some(status => status === 'Used');
+            const row = group[0].charAt(0);
+            const firstSeat = parseInt(group[0].slice(1));
+            const lastSeat = parseInt(group[group.length - 1].slice(1));
 
             return {
               id: `booking-${index + 1}`,
               title: `Booking ${index + 1}`,
-              description: `${group.length} ticket${group.length > 1 ? 's' : ''} booked together`,
+              description: `${group.length} ticket${group.length > 1 ? 's' : ''} in Row ${row} (Seats ${firstSeat}-${lastSeat})`,
               runtime: "Active",
               genre: "Movie Tickets",
               ticketNumbers: group,
               status: isUsed ? 'Used' : 'Unused',
-              ticketId: `TKT-${Date.now()}-${index}`
+              ticketId: `TKT-${Date.now()}-${index}`,
+              row: row,
+              seatRange: `${firstSeat}-${lastSeat}`,
+              bookingDate: new Date().toLocaleDateString() // You might want to get this from the backend
             };
           }));
 

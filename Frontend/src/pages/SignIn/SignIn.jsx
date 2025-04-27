@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 
 function SignIn() {
   const navigate = useNavigate();
-  const { setUser } = useContext(AppContext);
+  const { setUser, updateAdminStatus } = useContext(AppContext);
   const [error, setError] = useState("");
   const [formState, setFormState] = useState("signin"); // "signin", "forgot", "otp", "newpassword"
   const [email, setEmail] = useState("");
@@ -80,10 +80,14 @@ function SignIn() {
       });
 
       if (response.data) {
-        toast.success("Login successful!", {
+        // Update admin status using the new method
+        updateAdminStatus(response.data.isAdmin || false);
+        
+        toast.success(response.data.message, {
           position: "top-right",
           autoClose: 2000,
         });
+        
         try {
           const sessionResponse = await axios.get("http://localhost:8080/api/auth/session", {
             withCredentials: true,
@@ -91,6 +95,10 @@ function SignIn() {
 
           if (sessionResponse.status === 200) {
             setUser(sessionResponse.data);
+            // Double-check admin status from session
+            if (sessionResponse.data.isAdmin !== undefined) {
+              updateAdminStatus(sessionResponse.data.isAdmin);
+            }
             setTimeout(() => {
               navigate("/");
             }, 1000);
@@ -103,6 +111,7 @@ function SignIn() {
         } catch (sessionError) {
           console.error("Session Fetch Error:", sessionError);
           setUser(null);
+          updateAdminStatus(false);
           toast.error("Failed to fetch user session.", {
             position: "top-right",
             autoClose: 3000,
