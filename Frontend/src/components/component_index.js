@@ -19,6 +19,8 @@ import LoadingAnimation from "./LoadingAnimation/LoadingAnimation";
 import ProfileLoading from "./LoadingAnimation/ProfileLoading";
 import Upcoming from "./Upcoming/Upcoming";
 import Sidebar from "./Sidebar/Sidebar";
+import CurrentEvent from "./CurrentEvent/CurrentEvent";
+import UpcomingEvent from "./UpcomingEvent/UpcomingEvent";
 
 export { 
     Navbar,
@@ -42,4 +44,6 @@ export {
     ProfileLoading,
     Upcoming,
     Sidebar,
+    CurrentEvent,
+    UpcomingEvent,
 }

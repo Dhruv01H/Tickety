@@ -21,7 +21,7 @@ import event2 from "./event2.jpg";
 import event3 from "./event3.jpg";
 import event4 from "./event4.jpg";
 import event5 from "./event5.jpg";
-import posterBanner from "./poster_banner1.jpg";
+import posterBanner from "./poster_banner1.png";
 import award1 from "./awards1.png";
 import award2 from "./awards2.png";
 import aboutinfo from "./about.jpg";

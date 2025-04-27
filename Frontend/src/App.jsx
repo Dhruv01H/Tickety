@@ -17,6 +17,7 @@ import {
   Charlie,
   Movies,
   Scanner,
+  Event,
   AdminHome,
   AddMovie,
   Showtime,
@@ -53,23 +54,25 @@ function AppContent() {
           </div>
         </div>
       ) : (
-        <>
-          {!navRoutes.includes(location.pathname) && <Navbar />}
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/movie" element={<Movies />} />
-            <Route path="/ticket" element={<BookTickets />} />
-            <Route path="/charlie" element={<Charlie />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/scanner" element={<Scanner />} />
-          </Routes>
-          {!footerRoutes.includes(location.pathname) && <Footer />}
-        </>
+
+          <AppContextProvider>
+            {!navRoutes.includes(location.pathname) && <Navbar />}
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/signin" element={<SignIn />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/movie" element={<Movies />} />
+              <Route path="/event" element={<Event />} />
+              <Route path="/ticket" element={<BookTickets />} />
+              <Route path="/charlie" element={<Charlie />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/scanner" element={<Scanner />} />
+            </Routes>
+            {!footerRoutes.includes(location.pathname) && <Footer />}
+          </AppContextProvider>
       )}
     </>
   );
