@@ -17,6 +17,7 @@ import {
   Charlie,
   Movies,
   Scanner,
+  Event,
   AdminHome,
   AddMovie,
   Showtime,
@@ -53,6 +54,7 @@ function App() {
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/movie" element={<Movies />} />
+              <Route path="/event" element={<Event />} />
               <Route path="/ticket" element={<BookTickets />} />
               <Route path="/charlie" element={<Charlie />} />
               <Route path="/contact" element={<Contact />} />
