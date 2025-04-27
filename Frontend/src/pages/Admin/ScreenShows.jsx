@@ -11,19 +11,24 @@ function ScreenShows() {
 
   useEffect(() => {
     fetchScreens();
+    // Cleanup function
+    return () => {
+      setSelectedScreen(null);
+      setShows([]);
+    };
   }, []);
 
   useEffect(() => {
     if (selectedScreen) {
-      console.log('Selected screen:', selectedScreen);
       fetchShowsForScreen(selectedScreen.screenNumber);
+    } else {
+      setShows([]); // Clear shows when no screen is selected
     }
   }, [selectedScreen]);
 
   const fetchScreens = async () => {
     try {
       const response = await axios.get("http://localhost:8080/api/screens");
-      console.log('Fetched screens:', response.data);
       setScreens(response.data);
       setLoading(false);
     } catch (error) {
@@ -35,13 +40,12 @@ function ScreenShows() {
 
   const fetchShowsForScreen = async (screenNumber) => {
     try {
-      console.log('Fetching shows for screen:', screenNumber);
       const response = await axios.get(`http://localhost:8080/api/events/shows/screen/${screenNumber}`);
-      console.log('Fetched shows:', response.data);
       setShows(response.data);
     } catch (error) {
       console.error("Error fetching shows:", error);
       toast.error("Failed to fetch shows for this screen");
+      setShows([]); // Clear shows on error
     }
   };
 
@@ -53,6 +57,11 @@ function ScreenShows() {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const handleScreenSelect = (screen) => {
+    setSelectedScreen(screen);
+    setShows([]); // Clear shows before loading new ones
   };
 
   if (loading) {
@@ -80,10 +89,7 @@ function ScreenShows() {
                     ? 'border-primary bg-primary/5'
                     : 'border-gray-200 hover:border-primary'
                 }`}
-                onClick={() => {
-                  console.log('Screen clicked:', screen);
-                  setSelectedScreen(screen);
-                }}
+                onClick={() => handleScreenSelect(screen)}
               >
                 <h3 className="text-lg font-medium">Screen {screen.screenNumber}</h3>
                 <p className="text-sm text-gray-600">
@@ -120,7 +126,7 @@ function ScreenShows() {
                         </div>
                         <div>
                           <p className="text-sm text-gray-600">Duration</p>
-                          <p className="font-medium">{show.event?.duration} minutes</p>
+                          <p className="font-medium">{show.event?.duration ? `${show.event.duration} minutes` : 'N/A'}</p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-600">Price</p>

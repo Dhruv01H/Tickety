@@ -4,10 +4,8 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SeatingLayoutPreview from '../../components/SeatingLayoutPreview/SeatingLayoutPreview';
 
-function ScreenManagement() {
+const ScreenManagement = () => {
   const [screens, setScreens] = useState([]);
-  const [selectedScreen, setSelectedScreen] = useState(null);
-  const [shows, setShows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingScreen, setEditingScreen] = useState(null);
   const [formData, setFormData] = useState({
@@ -20,42 +18,15 @@ function ScreenManagement() {
     fetchScreens();
   }, []);
 
-  useEffect(() => {
-    if (selectedScreen) {
-      fetchShowsForScreen(selectedScreen.screenNumber);
-    }
-  }, [selectedScreen]);
-
   const fetchScreens = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/screens");
+      const response = await axios.get('http://localhost:8080/api/screens');
       setScreens(response.data);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching screens:", error);
-      toast.error("Failed to fetch screens");
+      toast.error('Failed to fetch screens');
       setLoading(false);
     }
-  };
-
-  const fetchShowsForScreen = async (screenNumber) => {
-    try {
-      const response = await axios.get(`http://localhost:8080/api/events/shows/screen/${screenNumber}`);
-      setShows(response.data);
-    } catch (error) {
-      console.error("Error fetching shows:", error);
-      toast.error("Failed to fetch shows for this screen");
-    }
-  };
-
-  const formatDateTime = (dateTime) => {
-    return new Date(dateTime).toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
   };
 
   const handleInputChange = (e) => {
@@ -82,7 +53,7 @@ function ScreenManagement() {
     }
     try {
       if (editingScreen) {
-        await axios.put(`http://localhost:8080/api/screens/${editingScreen.id}`, formData);
+        await axios.put('http://localhost:8080/api/screens/${editingScreen.id', formData);
         toast.success('Screen updated successfully');
       } else {
         await axios.post('http://localhost:8080/api/screens', formData);
@@ -107,7 +78,7 @@ function ScreenManagement() {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this screen?')) {
       try {
-        await axios.delete(`http://localhost:8080/api/screens/${id}`);
+        await axios.delete('http://localhost:8080/api/screens/${id}');
         toast.success('Screen deleted successfully');
         fetchScreens();
       } catch (error) {
@@ -126,88 +97,168 @@ function ScreenManagement() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl">Loading...</div>
-      </div>
-    );
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
   return (
-    <div className="p-6">
-      <h1 className="mb-8 text-4xl font-bold text-primary">Screen Management</h1>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">Screen Management</h1>
       
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Screens List */}
-        <div className="p-6 bg-white rounded-lg shadow-md">
-          <h2 className="mb-4 text-2xl font-semibold">Screens</h2>
-          <div className="space-y-4">
-            {screens.map((screen) => (
-              <div
-                key={screen.id}
-                className={`p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
-                  selectedScreen?.id === screen.id
-                    ? 'border-primary bg-primary/5'
-                    : 'border-gray-200 hover:border-primary'
-                }`}
-                onClick={() => setSelectedScreen(screen)}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">
+              {editingScreen ? 'Edit Screen' : 'Add New Screen'}
+            </h2>
+            
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Screen Number
+              </label>
+              <input
+                type="text"
+                name="screenNumber"
+                value={formData.screenNumber}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Capacity
+              </label>
+              <input
+                type="number"
+                name="capacity"
+                value={formData.capacity}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+                min="1"
+                max="280"
+                placeholder="Enter capacity (max 280 seats)"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Screen Type
+              </label>
+              <select
+                name="screenType"
+                value={formData.screenType}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <h3 className="text-lg font-medium">Screen {screen.screenNumber}</h3>
-                <p className="text-sm text-gray-600">
-                  Type: {screen.screenType} | Capacity: {screen.capacity} seats
-                </p>
-              </div>
-            ))}
-          </div>
+                <option value="standard">Standard</option>
+                <option value="premium">Premium</option>
+                <option value="imax">IMAX</option>
+              </select>
+            </div>
+
+            <div className="flex justify-end space-x-4">
+              {editingScreen && (
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                >
+                  Cancel
+                </button>
+              )}
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              >
+                {editingScreen ? 'Update' : 'Add'} Screen
+              </button>
+            </div>
+          </form>
         </div>
 
-        {/* Shows List */}
-        <div className="lg:col-span-2">
-          {selectedScreen ? (
-            <div className="p-6 bg-white rounded-lg shadow-md">
-              <h2 className="mb-4 text-2xl font-semibold">
-                Shows for Screen {selectedScreen.screenNumber}
-              </h2>
-              {shows.length === 0 ? (
-                <div className="p-8 text-center border-2 border-dashed border-gray-300 rounded-lg">
-                  <p className="text-xl text-gray-600">No shows scheduled for this screen</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {shows.map((show) => (
-                    <div
-                      key={show.id}
-                      className="p-4 border border-gray-200 rounded-lg"
-                    >
-                      <h3 className="text-lg font-medium">{show.movie_name}</h3>
-                      <div className="grid grid-cols-2 gap-4 mt-2">
-                        <div>
-                          <p className="text-sm text-gray-600">Show Time</p>
-                          <p className="font-medium">{formatDateTime(show.dateTime)}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-600">Duration</p>
-                          <p className="font-medium">{show.event.duration} minutes</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-600">Price</p>
-                          <p className="font-medium">₹{show.price}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+        <div>
+          {formData.capacity ? (
+            <SeatingLayoutPreview capacity={formData.capacity} />
           ) : (
-            <div className="flex items-center justify-center h-full p-8 text-center border-2 border-dashed border-gray-300 rounded-lg">
-              <p className="text-xl text-gray-600">Select a screen to view its shows</p>
+            <div className="bg-white p-6 rounded-lg shadow-md h-full flex items-center justify-center">
+              <div className="text-center text-gray-500">
+                <svg
+                  className="mx-auto h-12 w-12 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+                <p className="mt-2 text-sm font-medium">Select a screen to show preview</p>
+                <p className="mt-1 text-xs">Enter screen capacity to see the seating layout</p>
+              </div>
             </div>
           )}
         </div>
       </div>
+
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Screen List</h2>
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <table className="min-w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Screen Number
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Capacity
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Screen Type
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {screens.map((screen) => (
+                <tr key={screen.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {screen.screenNumber}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {screen.capacity}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {screen.screenType}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button
+                      onClick={() => handleEdit(screen)}
+                      className="text-blue-600 hover:text-blue-900 mr-4"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(screen.id)}
+                      className="text-red-600 hover:text-red-900"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
-}
+};
 
-export default ScreenManagement; 
+export default ScreenManagement;

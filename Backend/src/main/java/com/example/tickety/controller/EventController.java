@@ -123,6 +123,17 @@ public ResponseEntity<?> addShow(@PathVariable int eventId, @RequestBody Show sh
                 .sorted((a, b) -> a.getDateTime().compareTo(b.getDateTime()))
                 .collect(Collectors.toList());
             
+            // Initialize event for each show and set movie name
+            shows.forEach(show -> {
+                if (show.getEvent() != null) {
+                    show.setmovie_name(show.getEvent().getShow_name());
+                    // Force load event details
+                    show.getEvent().getDuration();
+                    show.getEvent().getShow_name();
+                    show.getEvent().getLanguage();
+                }
+            });
+            
             return ResponseEntity.ok(shows);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();

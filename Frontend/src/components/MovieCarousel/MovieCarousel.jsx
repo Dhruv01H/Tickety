@@ -34,13 +34,31 @@ function MovieCarousel() {
 
   const fetchAllShows = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/events/shows/all");
-      // Filter out shows that have already started
+      // Get all shows
+      const showsResponse = await axios.get("http://localhost:8080/api/events/shows/all");
       const currentTime = new Date();
-      const validShows = response.data.filter(show => {
-        const showTime = new Date(show.dateTime);
-        return showTime > currentTime;
-      });
+      
+      // Get all screens
+      const screensResponse = await axios.get("http://localhost:8080/api/screens");
+      const screens = screensResponse.data;
+      
+      // Filter shows and attach screen data
+      const validShows = showsResponse.data
+        .filter(show => {
+          const showTime = new Date(show.dateTime);
+          return showTime > currentTime;
+        })
+        .map(show => {
+          // Find the matching screen
+          if (show.screen && show.screen.id) {
+            const matchingScreen = screens.find(screen => screen.id === show.screen.id);
+            if (matchingScreen) {
+              show.screen = matchingScreen;
+            }
+          }
+          return show;
+        });
+
       setAllShows(validShows);
     } catch (error) {
       console.error("Error fetching shows:", error);
@@ -63,7 +81,18 @@ function MovieCarousel() {
   };
 
   const getShowsForMovie = (movieId) => {
-    return allShows.filter(show => show.event?.id === movieId);
+    // First try to match by event.id
+    let shows = allShows.filter(show => show.event?.id === movieId);
+    
+    // If no shows found, try matching by movie_name
+    if (shows.length === 0) {
+      const movie = movies.find(m => m.id === movieId);
+      if (movie) {
+        shows = allShows.filter(show => show.movie_name === movie.show_name);
+      }
+    }
+    
+    return shows;
   };
 
   const isShowStartingSoon = (dateTime) => {
@@ -198,23 +227,19 @@ function MovieCarousel() {
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <p className="text-sm text-gray-600">Screen</p>
-                        <p className="font-medium">Screen {show.screen?.screenNumber || 'N/A'}</p>
+                        <p className="text-sm text-gray-600">Show Time</p>
+                        <p className="font-medium">{show.dateTime ? formatDateTime(show.dateTime) : 'N/A'}</p>
+                        {isShowStartingSoon(show.dateTime) && (
+                          <p className="mt-1 text-sm text-yellow-600">
+                            <i className="ri-time-line mr-1"></i>
+                            Starting soon!
+                          </p>
+                        )}
                       </div>
                       <div>
                         <p className="text-sm text-gray-600">Price</p>
                         <p className="font-medium">₹{show.price || 'N/A'}</p>
                       </div>
-                    </div>
-                    <div className="mt-4">
-                      <p className="text-sm text-gray-600">Show Time</p>
-                      <p className="font-medium">{show.dateTime ? formatDateTime(show.dateTime) : 'N/A'}</p>
-                      {isShowStartingSoon(show.dateTime) && (
-                        <p className="mt-1 text-sm text-yellow-600">
-                          <i className="ri-time-line mr-1"></i>
-                          Starting soon!
-                        </p>
-                      )}
                     </div>
                     <button
                       onClick={() => handleBookTicket(show)}
