@@ -55,7 +55,7 @@ function AppContent() {
           </div>
         </div>
       ) : (
-        <AppContextProvider>
+        <>
           {!navRoutes.includes(location.pathname) && <Navbar />}
           <Routes>
             <Route path="/" element={<Home />} />
@@ -69,9 +69,10 @@ function AppContent() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
             <Route path="/faq" element={<FAQ />} />
+            <Route path="/scanner" element={<Scanner />} /> {/* Added user scanner route */}
           </Routes>
           {!footerRoutes.includes(location.pathname) && <Footer />}
-        </AppContextProvider>
+        </>
       )}
     </>
   );
@@ -84,15 +85,14 @@ function App() {
     // Simulate loading time for components
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 3000); // Show loading for 2 seconds
+    }, 3000); // Show loading for 3 seconds
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <AppContextProvider>
-    {isLoading ? <LoadingAnimation /> : <AppContent />}
-      {/* <AppContent /> */}
+      {isLoading ? <LoadingAnimation /> : <AppContent />}
     </AppContextProvider>
   );
 }

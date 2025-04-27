@@ -17,6 +17,12 @@ function SignIn() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
+  // Add animation on mount
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   // Add notification component
   const Notification = ({ message }) => {
@@ -249,264 +255,274 @@ function SignIn() {
   };
 
   return (
-    <>
-      <style>{styles}</style>
-      {showNotification && <Notification message="Login Successful!" />}
-      <div className="flex h-screen">
-        <div
-          className="hidden w-1/2 h-full bg-center bg-cover md:block"
-          style={{ backgroundImage: `url(${assets.abstractBg})` }}
-        ></div>
-
-        <div className="flex flex-col items-center justify-center w-full px-8 md:w-1/2 md:px-12 relative">
-          {/* Close Button */}
-          <button
-            onClick={() => navigate('/')}
-            className="absolute top-8 right-8 text-gray-600 hover:text-gray-800 transition-colors duration-300"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-pink-600/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        
+        {/* Animated Particles */}
+        <div className="absolute inset-0">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-white/20 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animation: `float ${5 + Math.random() * 5}s infinite`,
+                animationDelay: `${Math.random() * 5}s`
+              }}
+            ></div>
+          ))}
+        </div>
+      </div>
+      
+      <div className={`w-full max-w-md transition-all duration-1000 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        {/* Logo and Title */}
+        <div className="text-center mb-8">
+          <div className="inline-block p-4 mb-4 rounded-full bg-gradient-to-br from-primary/20 to-pink-600/20 shadow-lg shadow-primary/20">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-14 w-14 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
             </svg>
-          </button>
+          </div>
+          <h1 className="text-5xl font-bold text-white mb-2 tracking-tight">Welcome Back</h1>
+          <p className="text-gray-400 text-lg">Sign in to continue your journey</p>
+        </div>
 
-          {formState === "signin" ? (
-            // Sign In Form
-
-            <>
-              <h2 className="mb-2 text-3xl font-semibold text-gray-800">
-                Sign In to Tickety
-              </h2>
-              <p className="mb-6 text-gray-500">Glad to see you back</p>
-
-              <form onSubmit={handleForm} className="w-full max-w-sm">
-                <div className="mb-4">
-                  <label htmlFor="email" className="font-medium text-gray-600">
-                    E-mail
-                  </label>
+        {/* Main Form Container */}
+        <div className="bg-black/40 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/5">
+          {formState === "signin" && (
+            <form onSubmit={handleForm} className="space-y-6">
+              <div className="group">
+                <label className="block text-sm font-medium text-gray-300 mb-2 transition-colors group-focus-within:text-primary">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                    </svg>
+                  </div>
                   <input
                     type="email"
                     name="email"
-                    placeholder="example@email.com"
-                    className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
                     required
-                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3.5 bg-black/50 border border-gray-800 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-500 transition-all duration-300"
+                    placeholder="Enter your email"
                   />
                 </div>
+              </div>
 
-                <div className="mb-4">
-                  <label
-                    htmlFor="password"
-                    className="font-medium text-gray-600"
-                  >
-                    Password
-                  </label>
+              <div className="group">
+                <label className="block text-sm font-medium text-gray-300 mb-2 transition-colors group-focus-within:text-primary">
+                  Password
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </div>
                   <input
                     type="password"
                     name="password"
-                    placeholder=""
-                    className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
                     required
-                    minLength={8}
-                    maxLength={14}
+                    className="w-full pl-10 pr-4 py-3.5 bg-black/50 border border-gray-800 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-500 transition-all duration-300"
+                    placeholder="Enter your password"
                   />
                 </div>
+              </div>
 
+              <div className="flex items-center justify-between">
                 <button
-                  type="submit"
-                  className="w-full py-2 font-medium text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary"
+                  type="button"
+                  onClick={() => setFormState("forgot")}
+                  className="text-sm text-primary hover:text-pink-400 transition-colors"
                 >
-                  Sign In
-                </button>
-              </form>
-            </>
-
-          ) : formState === "forgot" ? (
-            // Forgot Password Email Form
-
-            <>
-              <div className="w-full max-w-sm">
-                <h2 className="mb-4 text-3xl font-semibold text-gray-800">
                   Forgot Password?
-                </h2>
-                <form>
-                  <label
-                    htmlFor="femail"
-                    className="font-medium text-gray-600"
-                  >
-                    Email
-                  </label>
-                  <input
-                    name="femail"
-                    type="email"
-                    required
-                    placeholder="example@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-2 mt-1 mb-6 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
-                  />
+                </button>
+              </div>
 
-                  <button
-                    onClick={handleSendOtp}
-                    disabled={loading}
-                    className="relative w-full py-2 font-medium text-center text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary disabled:opacity-70 disabled:cursor-not-allowed"
-                  >
-                    {loading ? (
-                      <div className="flex items-center justify-center">
-                        <div className="w-6 h-6 mr-2">
-                          <svg className="animate-spin" viewBox="0 0 24 24">
-                            <circle 
-                              className="opacity-25" 
-                              cx="12" 
-                              cy="12" 
-                              r="10" 
-                              stroke="currentColor" 
-                              strokeWidth="4"
-                              fill="none"
-                            />
-                            <path 
-                              className="opacity-75" 
-                              fill="currentColor" 
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            />
-                          </svg>
-                        </div>
-                        <span>Sending OTP...</span>
-                      </div>
-                    ) : (
-                      "Send OTP"
-                    )}
-                  </button>
-                </form>
-              </div>
-            </>
-          ) : formState === "otp" ? (
-            // OTP Verification Form
-            <>
-              <div className="w-full max-w-sm">
-                <h2 className="mb-4 text-3xl font-semibold text-gray-800">
-                  Enter OTP
-                </h2>
-                <form>
-                  <label
-                    htmlFor="enter"
-                    className="font-medium text-gray-600"
-                  >
-                    Enter OTP
-                  </label>
-                  <input
-                    type="text"
-                    name="enter"
-                    placeholder="Enter OTP"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    className="w-full px-4 py-2 mt-1 mb-6 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
-                  />
-                  <button
-                    onClick={handleVerifyOtp}
-                    className="w-full py-2 font-medium text-white transition duration-300 rounded-lg cursor-pointer bg-primary hover:bg-secondary"
-                  >
-                    Verify OTP
-                  </button>
-                </form>
-              </div>
-            </>
-          ) : (
-            // New Password Form
-            <>
-              <div className="w-full max-w-sm">
-                <h2 className="mb-4 text-3xl font-semibold text-gray-800">
-                  Set New Password
-                </h2>
-                <form>
-                  <div className="mb-6">
-                    <label
-                      htmlFor="newpassword"
-                      className="font-medium text-gray-600"
-                    >
-                      New Password
-                    </label>
-                    <input
-                      type="password"
-                      name="newpassword"
-                      placeholder="**********"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      required
-                      minLength={8}
-                      maxLength={14}
-                      className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
-                    />
-                  </div>
-                  <div className="mb-8">
-                    <label
-                      htmlFor="confnewpassword"
-                      className="font-medium text-gray-600"
-                    >
-                      Confirm New Password
-                    </label>
-                    <input
-                      type="password"
-                      name="confnewpassword"
-                      placeholder="**********"
-                      value={confirmNewPassword}
-                      onChange={(e) =>
-                        setConfirmNewPassword(e.target.value)
-                      }
-                      required
-                      minLength={8}
-                      maxLength={14}
-                      className="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-1 focus:ring-primary focus:outline-none"
-                    />
-                  </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 px-4 bg-gradient-to-r from-primary to-pink-600 text-white rounded-lg transition duration-300 font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-primary/30 hover:scale-[1.02] transform"
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Signing in...
+                  </span>
+                ) : (
+                  "Sign In"
+                )}
+              </button>
 
+              <div className="text-center mt-4">
+                <p className="text-gray-400">
+                  Don't have an account?{" "}
                   <button
-                    onClick={handleResetPassword}
-                    className="w-full py-3 font-medium text-white transition duration-300 rounded-lg shadow-md cursor-pointer bg-primary hover:bg-secondary hover:shadow-lg"
+                    onClick={() => navigate("/signup")}
+                    className="text-primary hover:text-pink-400 transition-colors font-medium"
                   >
-                    Reset Password
+                    Sign Up
                   </button>
-                </form>
+                </p>
               </div>
-            </>
+            </form>
           )}
 
-          <div className="flex items-center w-full max-w-sm mt-4">
-            <div className="flex-1 border-t border-gray-300"></div>
-            <p className="px-3 text-gray-500">
-              <span
-                onClick={() => {
-                  if (formState !== "newpassword") {
-                    setFormState(formState === "signin" ? "forgot" : "signin");
-                  }
-                }}
-                className="font-semibold cursor-pointer"
+          {formState === "forgot" && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-white mb-4">Reset Password</h2>
+              <div className="group">
+                <label className="block text-sm font-medium text-gray-300 mb-2 transition-colors group-focus-within:text-primary">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                    </svg>
+                  </div>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 bg-white/5 border border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
+                    placeholder="Enter your email"
+                  />
+                </div>
+              </div>
+              <button
+                onClick={handleSendOtp}
+                disabled={loading}
+                className="w-full py-3 px-4 bg-gradient-to-r from-primary to-pink-600 text-white rounded-lg transition duration-300 font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-primary/30"
               >
-                {formState === "signin" ? "Forgot your Password?" : "Back to Login"}
-              </span>
-            </p>
-            <div className="flex-1 border-t border-gray-300"></div>
-          </div>
-
-          <div className="flex items-center w-full max-w-sm my-4">
-            <div className="flex-1 border-t border-gray-300"></div>
-            <p className="px-3 text-gray-500">
-              Don't have an account?{" "}
-              <span
-                onClick={() => navigate("/signup")}
-                className="font-semibold cursor-pointer"
+                {loading ? "Sending..." : "Send OTP"}
+              </button>
+              <button
+                onClick={() => setFormState("signin")}
+                className="w-full py-3 px-4 bg-gray-700/50 hover:bg-gray-600/50 text-white rounded-lg transition duration-300 font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               >
-                Sign Up
-              </span>
-            </p>
-            <div className="flex-1 border-t border-gray-300"></div>
-          </div>
+                Back to Sign In
+              </button>
+            </div>
+          )}
 
+          {formState === "otp" && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-white mb-4">Enter OTP</h2>
+              <div className="group">
+                <label className="block text-sm font-medium text-gray-300 mb-2 transition-colors group-focus-within:text-primary">
+                  OTP Code
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 bg-white/5 border border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
+                    placeholder="Enter OTP"
+                  />
+                </div>
+              </div>
+              <button
+                onClick={handleVerifyOtp}
+                disabled={loading}
+                className="w-full py-3 px-4 bg-gradient-to-r from-primary to-pink-600 text-white rounded-lg transition duration-300 font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-primary/30"
+              >
+                {loading ? "Verifying..." : "Verify OTP"}
+              </button>
+            </div>
+          )}
 
-          <p className="text-red-500">{message}</p>
-
+          {formState === "newpassword" && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-white mb-4">Set New Password</h2>
+              <div className="group">
+                <label className="block text-sm font-medium text-gray-300 mb-2 transition-colors group-focus-within:text-primary">
+                  New Password
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </div>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 bg-white/5 border border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
+                    placeholder="Enter new password"
+                  />
+                </div>
+              </div>
+              <div className="group">
+                <label className="block text-sm font-medium text-gray-300 mb-2 transition-colors group-focus-within:text-primary">
+                  Confirm New Password
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </div>
+                  <input
+                    type="password"
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 bg-white/5 border border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
+                    placeholder="Confirm new password"
+                  />
+                </div>
+              </div>
+              <button
+                onClick={handleResetPassword}
+                disabled={loading}
+                className="w-full py-3 px-4 bg-gradient-to-r from-primary to-pink-600 text-white rounded-lg transition duration-300 font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-primary/30"
+              >
+                {loading ? "Resetting..." : "Reset Password"}
+              </button>
+            </div>
+          )}
         </div>
+
+        {/* Close Button */}
+        <button
+          onClick={() => navigate('/')}
+          className="absolute top-8 right-8 text-gray-400 hover:text-white transition-colors duration-300 p-2 rounded-full hover:bg-white/10"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
-    </>
+
+      {showNotification && <Notification message={message} />}
+
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-20px);
+          }
+        }
+      `}</style>
+    </div>
   );
 }
 
