@@ -5,7 +5,7 @@ import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 
 function Navbar() {
-  const { user, setUser } = useContext(AppContext);
+  const { user, setUser, setIsAdmin } = useContext(AppContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrollingUp, setIsScrollingUp] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -30,7 +30,8 @@ function Navbar() {
 
       if (response.status === 200) {
         showPopup("Successful Logout");
-        setUser(null); // ✅ Clear the user state
+        setUser(null); // Clear the user state
+        setIsAdmin(false); // Reset admin state
         setTimeout(() => (window.location.href = "/signin"), 2000);
       }
     } catch (error) {

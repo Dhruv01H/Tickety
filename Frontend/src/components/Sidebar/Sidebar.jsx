@@ -1,9 +1,33 @@
-import React from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import React, { useContext } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { AppContext } from "../../context/AppContext";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { setUser, updateAdminStatus } = useContext(AppContext);
   const isDefaultPath = location.pathname === "/admin" || location.pathname === "/admin/";
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/auth/logout", {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
+
+      if (response.status === 200) {
+        setUser(null);
+        updateAdminStatus(false);
+        toast.success("Logged out successfully");
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Logout Error:", error);
+      toast.error("Failed to logout. Please try again.");
+    }
+  };
 
   return (
     <>
@@ -63,9 +87,25 @@ function Sidebar() {
             <i className="text-xl ri-timer-line"></i> Add Showtime
           </NavLink>
 
+          <NavLink
+            to="/admin/screens"
+            className={({ isActive }) =>
+              `flex items-center gap-3 p-3 rounded-lg ${
+                isActive
+                  ? "bg-primary text-white"
+                  : "text-gray-300 hover:bg-gray-800"
+              }`
+            }
+          >
+            <i className="text-xl ri-layout-grid-line"></i> Screen Management
+          </NavLink>
+
           <div className="flex-grow"></div>
 
-          <button className="flex items-center gap-3 p-3 mt-auto text-gray-300 transition-colors duration-200 rounded-lg cursor-pointer hover:bg-primary hover:text-white">
+          <button 
+            onClick={handleLogout}
+            className="flex items-center gap-3 p-3 mt-auto text-gray-300 transition-colors duration-200 rounded-lg cursor-pointer hover:bg-primary hover:text-white"
+          >
             <i className="text-xl ri-logout-box-r-line"></i> Logout
           </button>
         </nav>
