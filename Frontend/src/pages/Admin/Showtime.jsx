@@ -107,9 +107,13 @@ function Showtime() {
       const response = await axios.post(
         `http://localhost:8080/api/events/${selectedEvent.id}/shows`,
         {
-          screenNumber: parseInt(showData.screenNumber),
+          screen:{
+            screenNumber: parseInt(showData.screenNumber)
+          },
           dateTime: showData.dateTime,
           price: parseFloat(showData.price)
+          
+          
         },
         {
           headers: {
@@ -117,7 +121,8 @@ function Showtime() {
           },
         }
       );
-
+      
+      
       toast.success("Showtime added successfully!");
       setShowData({
         screenNumber: "",

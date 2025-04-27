@@ -3,11 +3,15 @@ package com.example.tickety.bean;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
 @Table(name = "screens")
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 public class Screen {
 
     @Id
@@ -27,6 +31,7 @@ public class Screen {
     private String description;
 
     @OneToMany(mappedBy = "screen", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Show> shows;
 
     @CreationTimestamp
