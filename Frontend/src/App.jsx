@@ -49,6 +49,7 @@ function AppContent() {
               <Route path="/admin/movie" element={<AddMovie />} />
               <Route path="/admin/showtime" element={<Showtime />} />
               <Route path="/admin/screens" element={<ScreenManagement />} />
+              <Route path="/admin/scanner" element={<Scanner />} />
               <Route path="/admin" element={<AdminHome />} />
             </Routes>
           </div>
@@ -69,7 +70,6 @@ function AppContent() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />
               <Route path="/faq" element={<FAQ />} />
-              <Route path="/scanner" element={<Scanner />} />
             </Routes>
             {!footerRoutes.includes(location.pathname) && <Footer />}
           </AppContextProvider>
