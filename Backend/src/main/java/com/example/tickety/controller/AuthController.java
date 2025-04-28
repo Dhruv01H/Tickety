@@ -113,7 +113,7 @@ public class AuthController {
             personRepository.save(person);
             
             // Create wallet for the new user
-            String walletAddress = walletService.createWallet(person.getPassword());
+            String walletAddress = walletService.createWallet(person.getEmail());
             person.setWalletAddress(walletAddress);
             personRepository.save(person);
             
