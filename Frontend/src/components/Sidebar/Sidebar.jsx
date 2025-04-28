@@ -112,19 +112,6 @@ function Sidebar() {
           >
             <i className="text-xl ri-calendar-todo-line"></i> Screen Shows
           </NavLink>
-          
-          <NavLink
-            to="/admin/scanner"
-            className={({ isActive }) =>
-              `flex items-center gap-3 p-3 rounded-lg ${
-                isActive
-                  ? "bg-primary text-white"
-                  : "text-gray-300 hover:bg-gray-800"
-              }`
-            }
-          >
-            <i className="text-xl ri-qr-scan-2-line"></i> Scanner
-          </NavLink>
 
           <div className="flex-grow"></div>
 

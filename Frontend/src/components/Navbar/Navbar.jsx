@@ -150,6 +150,12 @@ function Navbar() {
                 <li>Profile</li>
               </Link>
               <Link
+                to={"/scanner"}
+                className="font-semibold transition-all duration-700 decoration-primary hover:text-primary hover:underline underline-offset-4"
+              >
+                <li>Profile</li>
+              </Link>
+              <Link
                 onClick={logout}
                 className="font-semibold transition-all duration-700 decoration-primary hover:text-primary hover:underline underline-offset-4"
               >
@@ -221,6 +227,12 @@ function Navbar() {
               className="transition-all duration-700 decoration-primary hover:text-primary hover:underline underline-offset-4"
             >
               <li>Profile</li>
+            </Link>
+            <Link
+              to={"/scanner"}
+              className="transition-all duration-700 decoration-primary hover:text-primary hover:underline underline-offset-4"
+            >
+              <li>Scanner</li>
             </Link>
             <Link
               onClick={logout}
